@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#121826"
+    android:fitsSystemWindows="true">
+
+    <!-- HEADER BAR -->
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="start|center_vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:background="#0F1626">
+
+        <TextView
+            android:id="@+id/tabOT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="14dp"
+            android:text="OT"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@drawable/tab_bg_selected"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/tabNT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="14dp"
+            android:text="NT"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@drawable/tab_bg_unselected"
+            android:textColor="#FFFFFF" />
+        <TextView
+            android:id="@+id/tabDoc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="14dp"
+            android:text="Doc"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@drawable/tab_bg_unselected"
+            android:textColor="#FFFFFF" />
+        <TextView
+            android:id="@+id/tabNotes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="14dp"
+            android:text="Notes"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@drawable/tab_bg_unselected"
+            android:textColor="#FFFFFF" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/btnSettings"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Settings"
+            android:src="@android:drawable/ic_menu_preferences"
+            android:tint="#B8C1EC" />
+    </LinearLayout>
+
+    <!-- MAIN CONTENT AREA (everything swaps inside here) -->
+    <LinearLayout
+        android:id="@+id/mainContent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- Chapters top bar (hidden until a book is selected) -->
+        <LinearLayout
+            android:id="@+id/chaptersTopBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="12dp"
+            android:background="#121826"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/selectedBookTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Book"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Chapters / Verses recycler (hidden by default) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chaptersRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="12dp"
+            android:visibility="gone" />
+
+        <!-- Book list (visible by default) -->
+        <ListView
+            android:id="@+id/bookList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:dividerHeight="1dp"
+            android:background="#121826" />
+
+        <ListView
+            android:id="@+id/docsList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:dividerHeight="1dp"
+            android:background="#121826"
+            android:visibility="gone"/>
+
+        <!-- Notes list (hidden until Notes tab) -->
+        <LinearLayout
+            android:id="@+id/notesContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:padding="12dp">
+
+            <Button
+                android:id="@+id/btnNewNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="New note"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/notesRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="10dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/docsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:background="#121826">
+
+            <ListView
+                android:id="@+id/docsList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:dividerHeight="1dp"
+                android:background="#121826"/>
+        </LinearLayout>
+        <!-- Note editor (hidden until you open a note) -->
+        <LinearLayout
+            android:id="@+id/noteEditorContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:padding="12dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp">
+
+                <!-- Center display title (tap to edit) -->
+                <TextView
+                    android:id="@+id/noteTitleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="New Note"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:paddingVertical="6dp"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <!-- Center editable title (hidden until editing) -->
+                <EditText
+                    android:id="@+id/noteTitleEdit"
+                    android:layout_width="220dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    android:singleLine="true"
+                    android:text="New Note"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#B8C1EC"
+                    android:hint="Title"
+                    android:background="#1E2538"
+                    android:padding="8dp" />
+
+                <!-- Save button pinned right -->
+                <Button
+                    android:id="@+id/btnSaveNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:text="Save"
+                    android:textAllCaps="false" />
+            </FrameLayout>
+
+            <EditText
+                android:id="@+id/noteBody"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="top"
+                android:hint="Write your note…"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#B8C1EC"
+                android:background="#1E2538"
+                android:padding="12dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
