@@ -158,22 +158,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingTop="10dp"/>
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/docsContainer"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:background="#121826">
+            <Button
+                android:id="@+id/btnExportNotes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Export"
+                android:layout_marginTop="8dp"/>
 
-            <ListView
-                android:id="@+id/docsList"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:dividerHeight="1dp"
-                android:background="#121826"/>
+            <Button
+                android:id="@+id/btnImportNotes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Import"
+                android:layout_marginTop="8dp"/>
         </LinearLayout>
         <!-- Note editor (hidden until you open a note) -->
         <LinearLayout

@@ -30,7 +30,7 @@ import android.widget.ImageButton
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
-import com.example.mbible.data.BookAliasRepository
+import com.example.mbible.BookAliasRepository
 import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
@@ -346,7 +346,15 @@ class MainActivity : ComponentActivity() {
         chaptersRecycler.layoutManager = LinearLayoutManager(this)
 
         val verses = bibleRepo.getVerses(bookName, testament, chapter)
-        chaptersRecycler.adapter = VerseAdapter(verses)
+        val adapter = VerseAdapter(verses)
+
+        chaptersRecycler.adapter = adapter
+
+        // Build and set the spannable after adapter is attached
+        chaptersRecycler.post {
+            val vh = chaptersRecycler.findViewHolderForAdapterPosition(0) as? VerseAdapter.VH
+            vh?.textView?.text = adapter.buildSpannable(this)
+        }
     }
 
     private fun showDocsList() {
@@ -449,7 +457,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private val refRegex =
-        Regex("""(?i)\b([1-3]?\s*[a-z\.]+)\s*(\d{1,3})\s*:\s*(\d{1,3})(?:\s*-\s*(\d{1,3}))?\b""")
+        Regex("""(?i)\b([1-3]?\s*[a-z\.]+)\s*(\d{1,3})\s*:(\s*(\d{1,3})(?:\s*-\s*(\d{1,3}))?)?(?=\s|${'$'}|\W)""")
 
     private fun highlightVerseRefs(editable: Editable) {
         if (isHighlighting) return
@@ -465,22 +473,30 @@ class MainActivity : ComponentActivity() {
             for (m in refRegex.findAll(text)) {
                 val bookToken = m.groupValues[1]
                 val chapterStr = m.groupValues[2]
-                val verseStartStr = m.groupValues[3]
-                val verseEndStr = m.groupValues[4]  // may be ""
+                val verseStartStr = m.groupValues[4]  // was [3]
+                val verseEndStr = m.groupValues[5]    // was [4]
 
                 val canonical = aliasRepo.resolveBookToken(bookToken) ?: continue
 
                 val ch = chapterStr.toIntOrNull() ?: continue
-                val vsStart = verseStartStr.toIntOrNull() ?: continue
-                val vsEnd =
-                    (if (verseEndStr.isNotBlank()) verseEndStr.toIntOrNull() else null) ?: vsStart
+
+                val isFullChapter = verseStartStr.isBlank()
+
+                val vsStart = if (isFullChapter) 1 else verseStartStr.toIntOrNull() ?: continue
+                val vsEnd = when {
+                    isFullChapter -> bibleRepo.getVerseCount(canonical, ch)
+                    verseEndStr.isNotBlank() -> verseEndStr.toIntOrNull() ?: vsStart
+                    else -> vsStart
+                }
 
                 if (ch <= 0 || vsStart <= 0 || vsEnd <= 0) continue
                 if (vsEnd < vsStart) continue
 
                 // Validate existence (cheap version: validate start + end)
-                if (!bibleRepo.verseExists(canonical, ch, vsStart)) continue
-                if (!bibleRepo.verseExists(canonical, ch, vsEnd)) continue
+                if (!isFullChapter) {
+                    if (!bibleRepo.verseExists(canonical, ch, vsStart)) continue
+                    if (!bibleRepo.verseExists(canonical, ch, vsEnd)) continue
+                }
 
                 val start = m.range.first
                 val end = m.range.last + 1

@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Note title"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/text_primary"
         android:textSize="18sp" />
 
     <ImageButton
@@ -23,5 +23,5 @@
         android:background="@android:color/transparent"
         android:contentDescription="Delete note"
         android:src="@android:drawable/ic_menu_delete"
-        android:tint="#B8C1EC" />
+        android:tint="@color/text_secondary" />
 </LinearLayout>

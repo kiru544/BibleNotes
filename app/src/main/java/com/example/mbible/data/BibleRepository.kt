@@ -113,4 +113,19 @@ class BibleRepository(context: Context) {
 
         return verses
     }
+    fun getVerseCount(bookName: String, chapter: Int): Int {
+        val cursor = db.rawQuery(
+            """
+        SELECT MAX(v.verse)
+        FROM verses v
+        JOIN books b ON b.id = v.book_id
+        WHERE b.name = ? AND v.chapter = ?
+        """.trimIndent(),
+            arrayOf(bookName, chapter.toString())
+        )
+        cursor.use {
+            if (it.moveToFirst() && !it.isNull(0)) return it.getInt(0)
+        }
+        return 0
+    }
 }

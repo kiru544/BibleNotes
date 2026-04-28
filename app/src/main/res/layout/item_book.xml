@@ -6,5 +6,5 @@
     android:paddingVertical="14dp"
     android:paddingHorizontal="16dp"
     android:textSize="18sp"
-    android:textColor="#FFFFFF"
-    android:background="#121826" />
+    android:textColor="@color/text_primary"
+    android:background="@color/bg_primary" />

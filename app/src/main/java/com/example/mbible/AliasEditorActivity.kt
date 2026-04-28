@@ -4,7 +4,7 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.widget.*
 import androidx.activity.ComponentActivity
-import com.example.mbible.data.BookAliasRepository
+import com.example.mbible.BookAliasRepository
 
 class AliasEditorActivity : ComponentActivity() {
 
