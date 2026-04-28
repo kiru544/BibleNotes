@@ -1,0 +1,302 @@
+package com.example.mbible
+
+import android.app.AlertDialog
+import android.content.Context
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.text.Editable
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.TextWatcher
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import androidx.fragment.app.Fragment
+import com.example.mbible.data.BibleRepository
+import com.example.mbible.data.Note
+import com.example.mbible.data.NotesRepository
+
+class NoteEditorFragment : Fragment() {
+
+    private lateinit var notesRepo: NotesRepository
+    private lateinit var bibleRepo: BibleRepository
+    private lateinit var aliasRepo: BookAliasRepository
+
+    private lateinit var noteTitleText: TextView
+    private lateinit var noteTitleEdit: EditText
+    private lateinit var noteBody: EditText
+    private lateinit var btnSaveNote: Button
+
+    private var currentNoteId: Long? = null
+    private var isHighlighting = false
+    private val highlightHandler = Handler(Looper.getMainLooper())
+    private var highlightRunnable: Runnable? = null
+    private var pendingHighlight = false
+    private lateinit var verseHighlightScroll: View
+    private lateinit var verseHighlightBox: android.widget.LinearLayout
+
+
+    private val refRegex =
+        Regex("""(?i)\b([1-3]?\s*[a-z\.]+)\s*(\d{1,3})\s*:(\s*(\d{1,3})(?:\s*-\s*(\d{1,3}))?)?(?=\s|${'$'}|\W)""")
+
+    companion object {
+        private const val ARG_NOTE_ID = "note_id"
+
+        fun newInstance(noteId: Long): NoteEditorFragment {
+            val fragment = NoteEditorFragment()
+            val args = Bundle()
+            args.putLong(ARG_NOTE_ID, noteId)
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        notesRepo = NotesRepository(requireContext())
+        bibleRepo = BibleRepository(requireContext())
+        aliasRepo = BookAliasRepository(requireContext())
+        currentNoteId = arguments?.getLong(ARG_NOTE_ID)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return inflater.inflate(R.layout.fragment_note_editor, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        noteTitleText = view.findViewById(R.id.noteTitleText)
+        noteTitleEdit = view.findViewById(R.id.noteTitleEdit)
+        noteBody = view.findViewById(R.id.noteBody)
+        btnSaveNote = view.findViewById(R.id.btnSaveNote)
+
+        noteBody.movementMethod = LinkMovementMethod.getInstance()
+        noteBody.highlightColor = 0x00000000
+
+        verseHighlightScroll = view.findViewById(R.id.verseHighlightScroll)
+        verseHighlightBox = view.findViewById(R.id.verseHighlightBox)
+
+        // Load note
+        currentNoteId?.let { id ->
+            val note = notesRepo.getById(id)
+            if (note != null) loadNote(note)
+        }
+
+        noteBody.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                if (s == null) return
+                highlightRunnable?.let { highlightHandler.removeCallbacks(it) }
+                highlightRunnable = Runnable {
+                    if (isHighlighting) { pendingHighlight = true; return@Runnable }
+                    highlightVerseRefs(noteBody.text)
+                    updateHighlightBox(noteBody.text)
+                }
+                highlightHandler.postDelayed(highlightRunnable!!, 300)
+            }
+        })
+
+        btnSaveNote.setOnClickListener {
+            saveNote()
+            parentFragmentManager.popBackStack()
+        }
+
+        noteTitleText.setOnClickListener { startTitleEdit() }
+
+        noteTitleEdit.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                finishTitleEdit(); true
+            } else false
+        }
+
+        noteTitleEdit.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus && noteTitleEdit.visibility == View.VISIBLE) finishTitleEdit()
+        }
+    }
+
+    private fun loadNote(note: Note) {
+        noteTitleText.text = note.title
+        noteTitleEdit.setText(note.title)
+        noteTitleEdit.visibility = View.GONE
+        noteTitleText.visibility = View.VISIBLE
+        noteBody.setText(note.body)
+        highlightVerseRefs(noteBody.text)
+        updateHighlightBox(noteBody.text)
+    }
+
+    private fun saveNote() {
+        val id = currentNoteId ?: return
+        if (noteTitleEdit.visibility == View.VISIBLE) finishTitleEdit()
+        val title = noteTitleText.text.toString().trim().ifEmpty { "New Note" }
+        val body = noteBody.text.toString()
+        notesRepo.update(id, title, body)
+    }
+
+    private fun startTitleEdit() {
+        noteTitleEdit.visibility = View.VISIBLE
+        noteTitleText.visibility = View.GONE
+        noteTitleEdit.setText(noteTitleText.text.toString())
+        noteTitleEdit.requestFocus()
+        noteTitleEdit.setSelection(noteTitleEdit.text.length)
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE)
+                as InputMethodManager
+        imm.showSoftInput(noteTitleEdit, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    private fun finishTitleEdit() {
+        val newTitle = noteTitleEdit.text.toString().trim().ifEmpty { "New Note" }
+        noteTitleText.text = newTitle
+        noteTitleText.visibility = View.VISIBLE
+        noteTitleEdit.visibility = View.GONE
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE)
+                as InputMethodManager
+        imm.hideSoftInputFromWindow(noteTitleEdit.windowToken, 0)
+    }
+
+    private fun highlightVerseRefs(editable: Editable) {
+        if (isHighlighting) return
+        isHighlighting = true
+        try {
+            val oldSpans = editable.getSpans(0, editable.length, ClickableSpan::class.java)
+            for (s in oldSpans) editable.removeSpan(s)
+
+            for (m in refRegex.findAll(editable.toString())) {
+                val bookToken = m.groupValues[1]
+                val chapterStr = m.groupValues[2]
+                val verseStartStr = m.groupValues[4]
+                val verseEndStr = m.groupValues[5]
+
+                val canonical = aliasRepo.resolveBookToken(bookToken) ?: continue
+                val ch = chapterStr.toIntOrNull() ?: continue
+                val isFullChapter = verseStartStr.isBlank()
+                val vsStart = if (isFullChapter) 1 else verseStartStr.toIntOrNull() ?: continue
+                val vsEnd = when {
+                    isFullChapter -> bibleRepo.getVerseCount(canonical, ch)
+                    verseEndStr.isNotBlank() -> verseEndStr.toIntOrNull() ?: vsStart
+                    else -> vsStart
+                }
+
+                if (ch <= 0 || vsStart <= 0 || vsEnd <= 0 || vsEnd < vsStart) continue
+                if (!isFullChapter) {
+                    if (!bibleRepo.verseExists(canonical, ch, vsStart)) continue
+                    if (!bibleRepo.verseExists(canonical, ch, vsEnd)) continue
+                }
+
+                val start = m.range.first
+                val end = m.range.last + 1
+
+                val clickSpan = object : ClickableSpan() {
+                    override fun onClick(widget: View) {
+                        val verses = bibleRepo.getVerseRange(canonical, ch, vsStart, vsEnd)
+                        val message = verses.joinToString("\n\n") { v -> "${v.verse}. ${v.text}" }
+                        AlertDialog.Builder(requireContext())
+                            .setTitle("$canonical $ch:$vsStart${if (vsEnd != vsStart) "-$vsEnd" else ""}")
+                            .setMessage(message)
+                            .setPositiveButton("Close", null)
+                            .show()
+                    }
+
+                    override fun updateDrawState(ds: TextPaint) {
+                        super.updateDrawState(ds)
+                        ds.isUnderlineText = false
+                        ds.color = requireContext().getColor(R.color.accent_red)
+                    }
+                }
+
+                editable.setSpan(clickSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+        } finally {
+            isHighlighting = false
+            if (pendingHighlight) {
+                pendingHighlight = false
+                highlightHandler.post { highlightVerseRefs(noteBody.text) }
+            }
+        }
+    }
+    private fun updateHighlightBox(editable: Editable) {
+        verseHighlightBox.removeAllViews()
+        val refs = mutableListOf<Triple<String, Int, Pair<Int,Int>>>() // canonical, chapter, verse range
+
+        for (m in refRegex.findAll(editable.toString())) {
+            val bookToken = m.groupValues[1]
+            val chapterStr = m.groupValues[2]
+            val verseStartStr = m.groupValues[4]
+            val verseEndStr = m.groupValues[5]
+
+            val canonical = aliasRepo.resolveBookToken(bookToken) ?: continue
+            val ch = chapterStr.toIntOrNull() ?: continue
+            val isFullChapter = verseStartStr.isBlank()
+            val vsStart = if (isFullChapter) 1 else verseStartStr.toIntOrNull() ?: continue
+            val vsEnd = when {
+                isFullChapter -> bibleRepo.getVerseCount(canonical, ch)
+                verseEndStr.isNotBlank() -> verseEndStr.toIntOrNull() ?: vsStart
+                else -> vsStart
+            }
+
+            if (ch <= 0 || vsStart <= 0 || vsEnd <= 0 || vsEnd < vsStart) continue
+            if (!isFullChapter) {
+                if (!bibleRepo.verseExists(canonical, ch, vsStart)) continue
+                if (!bibleRepo.verseExists(canonical, ch, vsEnd)) continue
+            }
+
+            refs.add(Triple(canonical, ch, Pair(vsStart, vsEnd)))
+        }
+
+        if (refs.isEmpty()) {
+            verseHighlightScroll.visibility = View.GONE
+            return
+        }
+
+        verseHighlightScroll.visibility = View.VISIBLE
+
+        for ((index, ref) in refs.withIndex()) {
+            val (canonical, ch, range) = ref
+            val (vsStart, vsEnd) = range
+            val label = "$canonical $ch:$vsStart${if (vsEnd != vsStart) "-$vsEnd" else ""}"
+
+            val chip = TextView(requireContext()).apply {
+                text = label
+                textSize = 13f
+                setTextColor(requireContext().getColor(R.color.accent_red))
+                setPadding(16, 8, 16, 8)
+                isClickable = true
+                isFocusable = true
+                setOnClickListener {
+                    val verses = bibleRepo.getVerseRange(canonical, ch, vsStart, vsEnd)
+                    val message = verses.joinToString("\n\n") { v -> "${v.verse}. ${v.text}" }
+                    android.app.AlertDialog.Builder(requireContext())
+                        .setTitle(label)
+                        .setMessage(message)
+                        .setPositiveButton("Close", null)
+                        .show()
+                }
+            }
+
+            verseHighlightBox.addView(chip)
+
+            // Add separator dot between chips
+            if (index < refs.size - 1) {
+                val dot = TextView(requireContext()).apply {
+                    text = "  •  "
+                    textSize = 13f
+                    setTextColor(requireContext().getColor(R.color.text_secondary))
+                }
+                verseHighlightBox.addView(dot)
+            }
+        }
+    }
+}

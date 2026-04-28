@@ -62,4 +62,8 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation("com.github.chrisbanes:PhotoView:2.3.0")
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.viewpager2)
 }

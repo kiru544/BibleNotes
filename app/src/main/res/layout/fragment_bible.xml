@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_primary">
+
+    <!-- Top bar -->
+    <LinearLayout
+        android:id="@+id/chaptersTopBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:background="@color/bg_primary"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/selectedBookTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Book swiper -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/bookPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="visible"/>
+
+    <!-- Book list -->
+    <ListView
+        android:id="@+id/bookList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:dividerHeight="1dp"
+        android:background="@color/bg_primary"
+        android:visibility="gone"/>
+
+    <!-- Chapters / Verses recycler -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chaptersRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="12dp"
+        android:visibility="gone" />
+
+    <!-- Switch mode button -->
+    <Button
+        android:id="@+id/btnSwitchMode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Switch Mode"
+        android:textAllCaps="false"
+        android:background="@color/bg_surface"
+        android:textColor="@color/text_secondary"/>
+
+</LinearLayout>
