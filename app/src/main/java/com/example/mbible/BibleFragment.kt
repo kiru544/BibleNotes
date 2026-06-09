@@ -10,8 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.example.mbible.data.BibleRepository
+import kotlinx.coroutines.launch
 
 class BibleFragment : Fragment() {
 
@@ -23,6 +25,8 @@ class BibleFragment : Fragment() {
 
     private var testament: String = "Old"
     private var currentBook: String? = null
+    private var currentChapter: Int? = null
+    private lateinit var translationPicker: TextView
     private var inChaptersView = false
     private var inVersesView = false
     private lateinit var books: List<String>
@@ -66,24 +70,27 @@ class BibleFragment : Fragment() {
         selectedBookTitle = view.findViewById(R.id.selectedBookTitle)
         btnSwitchMode = view.findViewById(R.id.btnSwitchMode)
         bookList = view.findViewById(R.id.bookList)
+        translationPicker = view.findViewById(R.id.translationPicker)
+        updateTranslationLabel()
+        translationPicker.setOnClickListener { showTranslationMenu() }
 
-        books = bibleRepo.getBooks(testament)
+        viewLifecycleOwner.lifecycleScope.launch {
+            books = bibleRepo.getBooks(testament)
 
-        // Book pager setup
-        bookPager.adapter = BookPagerAdapter(books) { bookName ->
-            showChapters(bookName)
-        }
+            bookPager.adapter = BookPagerAdapter(books) { bookName ->
+                showChapters(bookName)
+            }
 
-        // List mode setup
-        val adapter = android.widget.ArrayAdapter(
-            requireContext(),
-            R.layout.item_book,
-            R.id.bookName,
-            books
-        )
-        bookList.adapter = adapter
-        bookList.setOnItemClickListener { _, _, position, _ ->
-            showChapters(books[position])
+            val adapter = android.widget.ArrayAdapter(
+                requireContext(),
+                R.layout.item_book,
+                R.id.bookName,
+                books
+            )
+            bookList.adapter = adapter
+            bookList.setOnItemClickListener { _, _, position, _ ->
+                showChapters(books[position])
+            }
         }
 
         // Switch mode toggle
@@ -128,13 +135,14 @@ class BibleFragment : Fragment() {
         chaptersRecycler.visibility = View.VISIBLE
 
         chaptersRecycler.layoutManager = GridLayoutManager(requireContext(), 6)
-
-        val count = bibleRepo.getChapterCount(bookName, testament)
-        chaptersRecycler.adapter = ChapterAdapter((1..count).toList()) { chapter ->
-            showVerses(bookName, chapter)
-        }
-
         btnSwitchMode.visibility = View.GONE
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val count = bibleRepo.getChapterCount(bookName, testament)
+            chaptersRecycler.adapter = ChapterAdapter((1..count).toList()) { chapter ->
+                showVerses(bookName, chapter)
+            }
+        }
 
         bookList.visibility = View.GONE
     }
@@ -142,21 +150,75 @@ class BibleFragment : Fragment() {
     private fun showVerses(bookName: String, chapter: Int) {
         inChaptersView = false
         inVersesView = true
+        currentChapter = chapter
 
         selectedBookTitle.text = "$bookName $chapter"
         chaptersRecycler.layoutManager = LinearLayoutManager(requireContext())
-
-        val verses = bibleRepo.getVerses(bookName, testament, chapter)
-        val adapter = VerseAdapter(verses)
-        chaptersRecycler.adapter = adapter
-
-        chaptersRecycler.post {
-            val vh = chaptersRecycler.findViewHolderForAdapterPosition(0) as? VerseAdapter.VH
-            vh?.textView?.text = adapter.buildSpannable(requireContext())
-        }
         btnSwitchMode.visibility = View.GONE
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val verses = bibleRepo.getVerses(bookName, testament, chapter)
+            if (verses.isEmpty()) {
+                val err = bibleRepo.lastRemoteError
+                if (err != null) {
+                    val msg = when {
+                        err.message?.contains("not_permitted", ignoreCase = true) == true ->
+                            "${bibleRepo.activeTranslation.abbreviation} not licensed for this app"
+                        err.message?.contains("network", ignoreCase = true) == true ||
+                                err.javaClass.simpleName.contains("Network") ->
+                            "Couldn't load ${bibleRepo.activeTranslation.abbreviation} — check connection"
+                        else ->
+                            "Couldn't load ${bibleRepo.activeTranslation.abbreviation}"
+                    }
+                    android.widget.Toast.makeText(requireContext(), msg, android.widget.Toast.LENGTH_LONG).show()
+                }
+            }
+            val adapter = VerseAdapter(verses)
+            chaptersRecycler.adapter = adapter
+
+            chaptersRecycler.post {
+                val vh = chaptersRecycler.findViewHolderForAdapterPosition(0) as? VerseAdapter.VH
+                vh?.textView?.text = adapter.buildSpannable(requireContext())
+            }
+        }
+    }
+    private fun updateTranslationLabel() {
+        translationPicker.text = "${bibleRepo.activeTranslation.abbreviation} ▾"
     }
 
+    private fun showTranslationMenu() {
+        val popup = android.widget.PopupMenu(requireContext(), translationPicker)
+        val translations = com.example.mbible.data.Translations.ALL
+        translations.forEachIndexed { index, t ->
+            popup.menu.add(0, index, index, "${t.abbreviation} — ${t.displayName}")
+        }
+        popup.setOnMenuItemClickListener { item ->
+            val chosen = translations[item.itemId]
+            bibleRepo.setActiveTranslation(chosen.id)
+            updateTranslationLabel()
+            refreshCurrentView()
+            true
+        }
+        popup.show()
+    }
+
+    private fun refreshCurrentView() {
+        when {
+            inVersesView -> {
+                val book = currentBook ?: return
+                val chapter = currentChapter ?: return
+                showVerses(book, chapter)
+            }
+            inChaptersView -> {
+                val book = currentBook ?: return
+                showChapters(book)
+            }
+            else -> {
+                // On the book pager — book names are the same across
+                // translations, so nothing needs reloading.
+            }
+        }
+    }
     fun onBackPressed(): Boolean {
         return when {
             inVersesView -> {

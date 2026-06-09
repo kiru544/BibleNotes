@@ -6,6 +6,24 @@
     android:layout_height="match_parent"
     android:background="@color/bg_primary">
 
+    <!-- Translation picker -->
+    <TextView
+        android:id="@+id/translationPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
+        android:paddingHorizontal="28dp"
+        android:paddingVertical="8dp"
+        android:text="KJV"
+        android:textColor="@color/text_primary"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:background="@color/bg_surface"
+        android:clickable="true"
+        android:focusable="true" />
+
     <!-- Top bar -->
     <LinearLayout
         android:id="@+id/chaptersTopBar"

@@ -20,7 +20,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.mbible.data.BibleRepository
+import kotlinx.coroutines.launch
 import com.example.mbible.data.Note
 import com.example.mbible.data.NotesRepository
 
@@ -103,8 +105,10 @@ class NoteEditorFragment : Fragment() {
                 highlightRunnable?.let { highlightHandler.removeCallbacks(it) }
                 highlightRunnable = Runnable {
                     if (isHighlighting) { pendingHighlight = true; return@Runnable }
-                    highlightVerseRefs(noteBody.text)
-                    updateHighlightBox(noteBody.text)
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        highlightVerseRefs(noteBody.text)
+                        updateHighlightBox(noteBody.text)
+                    }
                 }
                 highlightHandler.postDelayed(highlightRunnable!!, 300)
             }
@@ -134,8 +138,10 @@ class NoteEditorFragment : Fragment() {
         noteTitleEdit.visibility = View.GONE
         noteTitleText.visibility = View.VISIBLE
         noteBody.setText(note.body)
-        highlightVerseRefs(noteBody.text)
-        updateHighlightBox(noteBody.text)
+        viewLifecycleOwner.lifecycleScope.launch {
+            highlightVerseRefs(noteBody.text)
+            updateHighlightBox(noteBody.text)
+        }
     }
 
     private fun saveNote() {
@@ -167,7 +173,7 @@ class NoteEditorFragment : Fragment() {
         imm.hideSoftInputFromWindow(noteTitleEdit.windowToken, 0)
     }
 
-    private fun highlightVerseRefs(editable: Editable) {
+    private suspend fun highlightVerseRefs(editable: Editable) {
         if (isHighlighting) return
         isHighlighting = true
         try {
@@ -201,13 +207,15 @@ class NoteEditorFragment : Fragment() {
 
                 val clickSpan = object : ClickableSpan() {
                     override fun onClick(widget: View) {
-                        val verses = bibleRepo.getVerseRange(canonical, ch, vsStart, vsEnd)
-                        val message = verses.joinToString("\n\n") { v -> "${v.verse}. ${v.text}" }
-                        AlertDialog.Builder(requireContext())
-                            .setTitle("$canonical $ch:$vsStart${if (vsEnd != vsStart) "-$vsEnd" else ""}")
-                            .setMessage(message)
-                            .setPositiveButton("Close", null)
-                            .show()
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            val verses = bibleRepo.getVerseRange(canonical, ch, vsStart, vsEnd)
+                            val message = verses.joinToString("\n\n") { v -> "${v.verse}. ${v.text}" }
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("$canonical $ch:$vsStart${if (vsEnd != vsStart) "-$vsEnd" else ""}")
+                                .setMessage(message)
+                                .setPositiveButton("Close", null)
+                                .show()
+                        }
                     }
 
                     override fun updateDrawState(ds: TextPaint) {
@@ -223,11 +231,13 @@ class NoteEditorFragment : Fragment() {
             isHighlighting = false
             if (pendingHighlight) {
                 pendingHighlight = false
-                highlightHandler.post { highlightVerseRefs(noteBody.text) }
+                highlightHandler.post {
+                    viewLifecycleOwner.lifecycleScope.launch { highlightVerseRefs(noteBody.text) }
+                }
             }
         }
     }
-    private fun updateHighlightBox(editable: Editable) {
+    private suspend fun updateHighlightBox(editable: Editable) {
         verseHighlightBox.removeAllViews()
         val refs = mutableListOf<Triple<String, Int, Pair<Int,Int>>>() // canonical, chapter, verse range
 
@@ -276,13 +286,15 @@ class NoteEditorFragment : Fragment() {
                 isClickable = true
                 isFocusable = true
                 setOnClickListener {
-                    val verses = bibleRepo.getVerseRange(canonical, ch, vsStart, vsEnd)
-                    val message = verses.joinToString("\n\n") { v -> "${v.verse}. ${v.text}" }
-                    android.app.AlertDialog.Builder(requireContext())
-                        .setTitle(label)
-                        .setMessage(message)
-                        .setPositiveButton("Close", null)
-                        .show()
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        val verses = bibleRepo.getVerseRange(canonical, ch, vsStart, vsEnd)
+                        val message = verses.joinToString("\n\n") { v -> "${v.verse}. ${v.text}" }
+                        android.app.AlertDialog.Builder(requireContext())
+                            .setTitle(label)
+                            .setMessage(message)
+                            .setPositiveButton("Close", null)
+                            .show()
+                    }
                 }
             }
 
