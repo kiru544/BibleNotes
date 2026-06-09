@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#121826"
+    android:background="@color/bg_primary"
     android:fitsSystemWindows="true"
     android:padding="16dp">
 
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Book"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/text_primary"
         android:textSize="22sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -32,9 +32,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="Add short name"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#B8C1EC"
-            android:background="#1E2538"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_secondary"
+            android:background="@color/bg_surface"
             android:padding="12dp"
             android:singleLine="true"
             android:imeOptions="actionDone"/>
@@ -62,5 +62,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:dividerHeight="1dp"
-        android:background="#121826"/>
+        android:background="@color/bg_primary"/>
 </LinearLayout>

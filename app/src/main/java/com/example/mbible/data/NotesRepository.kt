@@ -71,4 +71,33 @@ class NotesRepository(context: Context) {
         val db = helper.writableDatabase
         db.delete("notes", "id=?", arrayOf(id.toString()))
     }
+    fun exportToJson(context: Context): String {
+        val notes = getAll()
+        val jsonArray = org.json.JSONArray()
+        for (note in notes) {
+            val obj = org.json.JSONObject()
+            obj.put("title", note.title)
+            obj.put("body", note.body)
+            obj.put("updated_at", note.updatedAt)
+            jsonArray.put(obj)
+        }
+        return jsonArray.toString(2)
+    }
+
+    fun importFromJson(json: String): Int {
+        val jsonArray = org.json.JSONArray(json)
+        var count = 0
+        for (i in 0 until jsonArray.length()) {
+            val obj = jsonArray.getJSONObject(i)
+            val title = obj.optString("title", "Imported Note")
+            val body = obj.optString("body", "")
+            create(title).also { id ->
+                if (id != -1L) {
+                    update(id, title, body)
+                    count++
+                }
+            }
+        }
+        return count
+    }
 }

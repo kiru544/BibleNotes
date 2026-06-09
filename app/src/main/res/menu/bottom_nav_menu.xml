@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_ot"
+        android:icon="@drawable/ic_ot"
+        android:title="OT" />
+
+    <item
+        android:id="@+id/nav_nt"
+        android:icon="@drawable/ic_nt"
+        android:title="NT" />
+
+    <item
+        android:id="@+id/nav_docs"
+        android:icon="@drawable/ic_docs"
+        android:title="Docs" />
+
+    <item
+        android:id="@+id/nav_notes"
+        android:icon="@drawable/ic_notes"
+        android:title="Notes" />
+
+</menu>

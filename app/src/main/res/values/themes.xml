@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.MBible" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/bg_surface</item>
+        <item name="colorPrimaryVariant">@color/bg_header</item>
+        <item name="colorOnPrimary">@color/text_primary</item>
+        <item name="colorSurface">@color/bg_surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="android:colorBackground">@color/bg_primary</item>
+        <item name="android:windowBackground">@color/bg_primary</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColorHint">@color/text_secondary</item>
+        <item name="bottomNavigationStyle">@style/NavStyle</item>
+    </style>
 
-    <style name="Theme.MBible" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="NavStyle" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:background">@color/bg_header</item>
+        <item name="itemIconTint">@color/text_secondary</item>
+        <item name="itemTextColor">@color/text_secondary</item>
+    </style>
 </resources>

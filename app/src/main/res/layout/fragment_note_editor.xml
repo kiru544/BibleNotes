@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_primary"
+    android:padding="12dp">
+
+    <!-- Title + Save row -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp">
+
+        <TextView
+            android:id="@+id/noteTitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="New Note"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingVertical="6dp"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <EditText
+            android:id="@+id/noteTitleEdit"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:singleLine="true"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_secondary"
+            android:hint="Title"
+            android:background="@color/bg_surface"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/btnSaveNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:text="Save"
+            android:textAllCaps="false" />
+
+    </FrameLayout>
+
+    <!-- Verse highlight box — OUTSIDE FrameLayout -->
+    <HorizontalScrollView
+        android:id="@+id/verseHighlightScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginBottom="10dp">
+
+        <LinearLayout
+            android:id="@+id/verseHighlightBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/bg_surface"
+            android:padding="10dp"
+            android:gravity="center_vertical"/>
+
+    </HorizontalScrollView>
+
+    <!-- Note body -->
+    <EditText
+        android:id="@+id/noteBody"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="top"
+        android:hint="Write your note…"
+        android:textColor="@color/text_primary"
+        android:textColorHint="@color/text_secondary"
+        android:background="@color/bg_surface"
+        android:padding="12dp" />
+
+</LinearLayout>

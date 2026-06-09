@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="#121826"
+    android:background="@color/bg_primary"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Catechism of the Catholic Church"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/text_primary"
         android:textSize="20sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="#0F1626"
+        android:background="@color/bg_header"
         android:scaleType="fitCenter" />
 
     <TextView
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="1/628"
-        android:textColor="#B8C1EC"
+        android:textColor="@color/text_secondary"
         android:textSize="20sp"
         android:paddingTop="6dp"
         android:paddingBottom="6dp" />

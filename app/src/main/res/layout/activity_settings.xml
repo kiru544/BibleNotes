@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#121826"
+    android:background="@color/bg_primary"
     android:fitsSystemWindows="true">
 
     <TextView
@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Book Short Names"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/text_primary"
         android:textSize="22sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -23,5 +23,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:dividerHeight="1dp"
-        android:background="#121826"/>
+        android:background="@color/bg_primary"/>
 </LinearLayout>

@@ -1,116 +1,73 @@
 package com.example.mbible.data
 
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
-import com.example.mbible.data.Verse
 
-class BibleRepository(context: Context) {
+/**
+ * Public façade used by Fragments / ViewModels.
+ *
+ * Replaces the previous concrete-SQLite implementation. Picks a [BibleSource]
+ * based on which translation the user has active in [TranslationPrefs],
+ * then delegates every read.
+ *
+ * Behaviour notes:
+ * - Methods are now `suspend`. Call them from `lifecycleScope.launch { ... }`
+ *   or from a ViewModel scope. (Previous synchronous calls on the main
+ *   thread were doing I/O on the UI thread anyway — this is an upgrade.)
+ * - The active translation can change at runtime; the next call will use the
+ *   new one.
+ */
+class BibleRepository(private val context: Context) {
 
-    private val db: SQLiteDatabase =
-        SQLiteDatabase.openDatabase(
-            BibleDatabaseHelper.getDatabasePath(context),
-            null,
-            SQLiteDatabase.OPEN_READONLY
-        )
+    private val prefs = TranslationPrefs(context)
+    private val local: BibleSource = LocalBibleSource(context)
 
-    fun getBooks(testament: String): List<String> {
-        val books = mutableListOf<String>()
+    // Created lazily so apps with no remote translation never open the cache DB.
+    private val cache: ChapterCache by lazy { ChapterCache(context) }
 
-        val cursor = db.rawQuery(
-            """
-            SELECT name
-            FROM books
-            WHERE testament = ?
-            ORDER BY book_order
-            """.trimIndent(),
-            arrayOf(testament)
-        )
+    /**
+     * One remote source per translation id. Cached so we don't rebuild the
+     * SDK plumbing on every call.
+     */
+    private val remoteSources = mutableMapOf<String, RemoteBibleSource>()
 
-        cursor.use {
-            while (it.moveToNext()) {
-                books.add(it.getString(0))
+    private fun activeSource(): BibleSource {
+        val t = prefs.activeTranslation
+        val src: BibleSource = when (t.kind) {
+            Translation.Kind.LOCAL -> local
+            Translation.Kind.REMOTE -> remoteSources.getOrPut(t.id) {
+                RemoteBibleSource(t, cache)
             }
         }
-
-        return books
-    }
-    fun getChapterCount(bookName: String, testament: String): Int {
-        val cursor = db.rawQuery(
-            """
-        SELECT MAX(v.chapter)
-        FROM verses v
-        JOIN books b ON b.id = v.book_id
-        WHERE b.name = ? AND b.testament = ?
-        """.trimIndent(),
-            arrayOf(bookName, testament)
-        )
-
-        cursor.use {
-            if (it.moveToFirst() && !it.isNull(0)) {
-                return it.getInt(0)
-            }
-        }
-        return 0
+        return src
     }
 
-    fun getVerses(bookName: String, testament: String, chapter: Int): List<Verse> {
-        val verses = mutableListOf<Verse>()
-
-        val cursor = db.rawQuery(
-            """
-        SELECT v.verse, v.text
-        FROM verses v
-        JOIN books b ON b.id = v.book_id
-        WHERE b.name = ? AND b.testament = ? AND v.chapter = ?
-        ORDER BY v.verse
-        """.trimIndent(),
-            arrayOf(bookName, testament, chapter.toString())
-        )
-
-        cursor.use {
-            while (it.moveToNext()) {
-                val verseNum = it.getInt(0)
-                val text = it.getString(1)
-                verses.add(Verse(verseNum, text))
-            }
-        }
-
-        return verses
+    val activeTranslation: Translation get() = prefs.activeTranslation
+    /** Most recent error from a remote source, or null. UI checks this after a fetch returns empty. */
+    val lastRemoteError: Exception?
+        get() = (activeSource() as? RemoteBibleSource)?.lastError
+    fun setActiveTranslation(id: String) {
+        prefs.activeTranslationId = id
     }
-    fun verseExists(bookName: String, chapter: Int, verse: Int): Boolean {
-        val c = db.rawQuery(
-            """
-        SELECT 1
-        FROM verses v
-        JOIN books b ON b.id = v.book_id
-        WHERE b.name = ? AND v.chapter = ? AND v.verse = ?
-        LIMIT 1
-        """.trimIndent(),
-            arrayOf(bookName, chapter.toString(), verse.toString())
-        )
 
-        return c.use { it.moveToFirst() }
-    }
-    fun getVerseRange(bookName: String, chapter: Int, startVerse: Int, endVerse: Int): List<Verse> {
-        val verses = mutableListOf<Verse>()
+    // --- BibleSource pass-through ---------------------------------------
 
-        val cursor = db.rawQuery(
-            """
-        SELECT v.verse, v.text
-        FROM verses v
-        JOIN books b ON b.id = v.book_id
-        WHERE b.name = ? AND v.chapter = ? AND v.verse BETWEEN ? AND ?
-        ORDER BY v.verse
-        """.trimIndent(),
-            arrayOf(bookName, chapter.toString(), startVerse.toString(), endVerse.toString())
-        )
+    suspend fun getBooks(testament: String): List<String> =
+        activeSource().getBooks(testament)
 
-        cursor.use {
-            while (it.moveToNext()) {
-                verses.add(Verse(it.getInt(0), it.getString(1)))
-            }
-        }
+    suspend fun getChapterCount(bookName: String, testament: String): Int =
+        activeSource().getChapterCount(bookName, testament)
 
-        return verses
-    }
+    suspend fun getVerses(bookName: String, testament: String, chapter: Int): List<Verse> =
+        activeSource().getVerses(bookName, testament, chapter)
+
+    suspend fun getVerseRange(
+        bookName: String, chapter: Int, startVerse: Int, endVerse: Int
+    ): List<Verse> =
+        activeSource().getVerseRange(bookName, chapter, startVerse, endVerse)
+
+    suspend fun getVerseCount(bookName: String, chapter: Int): Int =
+        activeSource().getVerseCount(bookName, chapter)
+
+    suspend fun verseExists(bookName: String, chapter: Int, verse: Int): Boolean =
+        activeSource().verseExists(bookName, chapter, verse)
 }

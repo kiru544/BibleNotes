@@ -5,14 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mbible.data.Note
 
 class NotesAdapter(
-    private var notes: List<Note>,
     private val onOpen: (Note) -> Unit,
     private val onDelete: (Note) -> Unit
-) : RecyclerView.Adapter<NotesAdapter.VH>() {
+) : ListAdapter<Note, NotesAdapter.VH>(DIFF) {
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.findViewById(R.id.noteTitleRow)
@@ -26,17 +27,16 @@ class NotesAdapter(
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        val note = notes[position]
+        val note = getItem(position)
         holder.title.text = note.title
-
         holder.itemView.setOnClickListener { onOpen(note) }
         holder.deleteBtn.setOnClickListener { onDelete(note) }
     }
 
-    override fun getItemCount(): Int = notes.size
-
-    fun submit(newNotes: List<Note>) {
-        notes = newNotes
-        notifyDataSetChanged()
+    companion object {
+        private val DIFF = object : DiffUtil.ItemCallback<Note>() {
+            override fun areItemsTheSame(old: Note, new: Note) = old.id == new.id
+            override fun areContentsTheSame(old: Note, new: Note) = old == new
+        }
     }
 }
