@@ -57,7 +57,7 @@ More translations are planned.
 
 The Notes section shows a list of notes saved in the database, if any exist.
 
-You can create a new note with a title. The title could be the topic you are writing about, the date, or the sermon and pastor name if you are taking notes during a sermon.
+You can create a new note with a title. The title could be the topic you are writing about or the date and pastor's name if you are taking notes during a sermon.
 
 Inside a note, you can type a Bible reference using the book name, chapter, and optional verse range. The app detects the reference and highlights it. When you tap the highlighted reference, it shows the related verse or verses from the Bible.
 
