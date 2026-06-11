@@ -1,6 +1,6 @@
 # BibleNotes - BETA 📖
 
-*Last updated: 9/6/26*
+*Last updated: 11/6/26*
 
 A Bible reading and note-taking app for Android.
 
