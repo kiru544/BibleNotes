@@ -35,6 +35,8 @@ class BibleFragment : Fragment() {
     private var isCardMode = true
     private lateinit var bookList: android.widget.ListView
 
+    private lateinit var versePager: androidx.viewpager2.widget.ViewPager2
+
     companion object {
         private const val ARG_TESTAMENT = "testament"
 
@@ -71,6 +73,7 @@ class BibleFragment : Fragment() {
         btnSwitchMode = view.findViewById(R.id.btnSwitchMode)
         bookList = view.findViewById(R.id.bookList)
         translationPicker = view.findViewById(R.id.translationPicker)
+        versePager = view.findViewById(R.id.versePager)
         updateTranslationLabel()
         translationPicker.setOnClickListener { showTranslationMenu() }
 
@@ -113,6 +116,7 @@ class BibleFragment : Fragment() {
         inVersesView = false
         chaptersTopBar.visibility = View.GONE
         chaptersRecycler.visibility = View.GONE
+        versePager.visibility = View.GONE
         btnSwitchMode.visibility = View.VISIBLE
 
         if (isCardMode) {
@@ -131,6 +135,7 @@ class BibleFragment : Fragment() {
 
         selectedBookTitle.text = bookName
         bookPager.visibility = View.GONE
+        versePager.visibility = View.GONE
         chaptersTopBar.visibility = View.VISIBLE
         chaptersRecycler.visibility = View.VISIBLE
 
@@ -153,33 +158,31 @@ class BibleFragment : Fragment() {
         currentChapter = chapter
 
         selectedBookTitle.text = "$bookName $chapter"
-        chaptersRecycler.layoutManager = LinearLayoutManager(requireContext())
         btnSwitchMode.visibility = View.GONE
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            val verses = bibleRepo.getVerses(bookName, testament, chapter)
-            if (verses.isEmpty()) {
-                val err = bibleRepo.lastRemoteError
-                if (err != null) {
-                    val msg = when {
-                        err.message?.contains("not_permitted", ignoreCase = true) == true ->
-                            "${bibleRepo.activeTranslation.abbreviation} not licensed for this app"
-                        err.message?.contains("network", ignoreCase = true) == true ||
-                                err.javaClass.simpleName.contains("Network") ->
-                            "Couldn't load ${bibleRepo.activeTranslation.abbreviation} — check connection"
-                        else ->
-                            "Couldn't load ${bibleRepo.activeTranslation.abbreviation}"
-                    }
-                    android.widget.Toast.makeText(requireContext(), msg, android.widget.Toast.LENGTH_LONG).show()
-                }
-            }
-            val adapter = VerseAdapter(verses)
-            chaptersRecycler.adapter = adapter
+        // Hide the recycler, show the pager
+        chaptersRecycler.visibility = View.GONE
+        versePager.visibility = View.VISIBLE
+        chaptersTopBar.visibility = View.VISIBLE
+        bookPager.visibility = View.GONE
+        bookList.visibility = View.GONE
 
-            chaptersRecycler.post {
-                val vh = chaptersRecycler.findViewHolderForAdapterPosition(0) as? VerseAdapter.VH
-                vh?.textView?.text = adapter.buildSpannable(requireContext())
-            }
+        viewLifecycleOwner.lifecycleScope.launch {
+            val chapterCount = bibleRepo.getChapterCount(bookName, testament)
+
+            versePager.adapter = VersePagerAdapter(
+                bookName, testament, chapterCount, bibleRepo, viewLifecycleOwner
+            )
+
+            // Update title + currentChapter when swiping
+            versePager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    currentChapter = position + 1
+                    selectedBookTitle.text = "$bookName ${position + 1}"
+                }
+            })
+
+            versePager.setCurrentItem(chapter - 1, false)
         }
     }
     private fun updateTranslationLabel() {

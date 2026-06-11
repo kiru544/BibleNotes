@@ -72,6 +72,14 @@
         android:padding="12dp"
         android:visibility="gone" />
 
+    <!-- Next Chapters -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/versePager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone"/>
+
     <!-- Switch mode button -->
     <Button
         android:id="@+id/btnSwitchMode"
