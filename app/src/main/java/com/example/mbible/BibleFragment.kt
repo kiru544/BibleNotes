@@ -32,6 +32,7 @@ class BibleFragment : Fragment() {
     private lateinit var books: List<String>
 
     private lateinit var btnSwitchMode: Button
+    private lateinit var btnThemeToggle: Button
     private var isCardMode = true
     private lateinit var bookList: android.widget.ListView
 
@@ -74,6 +75,16 @@ class BibleFragment : Fragment() {
         bookList = view.findViewById(R.id.bookList)
         translationPicker = view.findViewById(R.id.translationPicker)
         versePager = view.findViewById(R.id.versePager)
+
+        // Theme toggle: show the right label, and flip the theme on tap.
+        btnThemeToggle = view.findViewById(R.id.btnThemeToggle)
+        updateThemeButtonLabel()
+        btnThemeToggle.setOnClickListener {
+            ThemeManager.toggleTheme(requireContext())
+            // Recreate the activity so the new colors are applied everywhere.
+            requireActivity().recreate()
+        }
+
         updateTranslationLabel()
         translationPicker.setOnClickListener { showTranslationMenu() }
 
@@ -187,6 +198,15 @@ class BibleFragment : Fragment() {
     }
     private fun updateTranslationLabel() {
         translationPicker.text = "${bibleRepo.activeTranslation.abbreviation} ▾"
+    }
+
+    /** Shows the theme the user will switch TO, so the button reads as an action. */
+    private fun updateThemeButtonLabel() {
+        btnThemeToggle.text = if (ThemeManager.isDark(requireContext())) {
+            "☀️ Light"
+        } else {
+            "🌙 Dark"
+        }
     }
 
     private fun showTranslationMenu() {

@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- App palette -->
-    <color name="bg_primary">#121826</color>
-    <color name="bg_header">#0F1626</color>
-    <color name="bg_surface">#1E2538</color>
-    <color name="text_primary">#FFFFFF</color>
-    <color name="text_secondary">#B8C1EC</color>
-    <color name="accent_red">#FF6F61</color>
+    <!-- ========================================================= -->
+    <!-- DEFAULT (DAY) = LIGHT THEME: "Sunrise Orange"             -->
+    <!-- These values are used whenever the device is NOT in       -->
+    <!-- night mode. The night-mode versions live in               -->
+    <!-- res/values-night/colors.xml and use the SAME names so     -->
+    <!-- every layout swaps automatically.                         -->
+    <!-- ========================================================= -->
+    <color name="bg_primary">#FFF7ED</color>     <!-- warm cream app background -->
+    <color name="bg_header">#FFFFFF</color>      <!-- white top/bottom bars -->
+    <color name="bg_surface">#FFFFFF</color>     <!-- white cards (Genesis card, notes) -->
+    <color name="text_primary">#292524</color>  <!-- warm charcoal (softer than black) -->
+    <color name="text_secondary">#78716C</color><!-- muted warm grey -->
+    <color name="accent_red">#F97316</color>     <!-- punchy sunrise orange -->
 </resources>

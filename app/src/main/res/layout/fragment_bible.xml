@@ -6,6 +6,29 @@
     android:layout_height="match_parent"
     android:background="@color/bg_primary">
 
+    <!-- Header row: theme toggle button (aligned right) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end|center_vertical"
+        android:paddingHorizontal="12dp"
+        android:paddingTop="8dp">
+
+        <Button
+            android:id="@+id/btnThemeToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="6dp"
+            android:text="🌙 Dark"
+            android:textAllCaps="false"
+            android:textColor="@color/accent_red"
+            android:background="@color/bg_surface" />
+    </LinearLayout>
+
     <!-- Translation picker -->
     <TextView
         android:id="@+id/translationPicker"
