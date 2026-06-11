@@ -1,4 +1,4 @@
-# BibleNotes 📖
+# BibleNotes - BETA 📖
 
 *Last updated: 9/6/26*
 
@@ -15,6 +15,7 @@ In the future, if I become a missionary or apologist, I want to be able to quick
 * **Bible** — Sorted by Old and New Testament, with KJV available by default and more translations available through the YouVersion Platform API.
 * **Notes** — Notes can highlight Bible references. Tapping a reference will show the related verse or verses.
 * **Documents** — Other documents related to Christianity.
+* **Theme** — Light and Dark Theme
 
 ---
 
@@ -127,15 +128,13 @@ KJV and the Catechism work out of the box. For NIV and other remote translations
 * Fix NIV verse layout
 
   * NIV has some notes in the verses that are not in KJV, so I need to understand them and design proper layouts for the Bible and notes.
-* Design the book covers.
-* Improve UI designs and layouts.
-
+  * Design the book covers.
+  * Improve UI designs and layouts.
   * Make the app more visually appealing and add more custom themes.
 
 ### Small
 
 * Show a proper empty state when a remote chapter fails to load.
-* Add swipe navigation to go to the next Bible chapter.
 
 ### Could do
 
@@ -152,5 +151,7 @@ KJV is public domain. Modern translations like NIV are copyrighted and accessed 
 The Catechism PDF is included as a reference document. Check the source or edition you are using for any redistribution terms that apply.
 
 ---
+Logs:
+11/06/26 patch 0.2: added light theme with some UI/UX improvements
 
 *Personal project — built to actually use.*
