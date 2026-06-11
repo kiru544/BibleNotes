@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Borderless ripple tinted with the accent color (orange in light,
+  sky-blue in dark, via @color/nav_ripple). No <item> mask = unbounded,
+  so it keeps the same borderless feel as selectableItemBackgroundBorderless.
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/nav_ripple" />

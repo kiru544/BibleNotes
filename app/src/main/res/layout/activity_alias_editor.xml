@@ -52,7 +52,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Short names:"
-        android:textColor="#B8C1EC"
+        android:textColor="@color/text_secondary"
         android:textSize="16sp"
         android:paddingTop="14dp"
         android:paddingBottom="8dp"/>

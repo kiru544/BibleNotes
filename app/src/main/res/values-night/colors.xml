@@ -12,4 +12,5 @@
     <color name="text_primary">#F8FAFC</color>  <!-- icy off-white -->
     <color name="text_secondary">#94A3B8</color><!-- slate grey -->
     <color name="accent_red">#38BDF8</color>     <!-- glowing sky blue -->
+    <color name="nav_ripple">#4038BDF8</color>  <!-- translucent sky-blue ripple for tabs -->
 </resources>

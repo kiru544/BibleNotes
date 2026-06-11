@@ -16,11 +16,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Make the status-bar icons dark on the light theme and light on the dark
-        // theme, so they're always readable.
-        val lightIcons = !ThemeManager.isDark(this)
-        androidx.core.view.WindowInsetsControllerCompat(window, window.decorView)
-            .isAppearanceLightStatusBars = lightIcons
+        // Make the status-bar icons readable on the current theme.
+        ThemeManager.applyStatusBarIcons(this)
 
         // 3. Initialize bottomNav FIRST
         bottomNav = findViewById(R.id.bottomNav)

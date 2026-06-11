@@ -3,10 +3,10 @@ package com.example.mbible
 import android.app.AlertDialog
 import android.os.Bundle
 import android.widget.*
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.example.mbible.BookAliasRepository
 
-class AliasEditorActivity : ComponentActivity() {
+class AliasEditorActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_BOOK = "extra_book"
@@ -26,6 +26,7 @@ class AliasEditorActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alias_editor)
+        ThemeManager.applyStatusBarIcons(this)
 
         // init
         aliasRepo = BookAliasRepository(this)

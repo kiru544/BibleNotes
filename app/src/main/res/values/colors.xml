@@ -13,4 +13,5 @@
     <color name="text_primary">#292524</color>  <!-- warm charcoal (softer than black) -->
     <color name="text_secondary">#78716C</color><!-- muted warm grey -->
     <color name="accent_red">#F97316</color>     <!-- punchy sunrise orange -->
+    <color name="nav_ripple">#40F97316</color>  <!-- translucent orange ripple for tabs -->
 </resources>

@@ -53,4 +53,15 @@ object ThemeManager {
 
     private fun prefs(context: Context) =
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+
+    /**
+     * Makes the status-bar icons dark on the light theme and light on the dark
+     * theme so they stay readable. Call from each Activity's onCreate.
+     */
+    fun applyStatusBarIcons(activity: android.app.Activity) {
+        val lightIcons = !isDark(activity)
+        androidx.core.view.WindowInsetsControllerCompat(
+            activity.window, activity.window.decorView
+        ).isAppearanceLightStatusBars = lightIcons
+    }
 }
