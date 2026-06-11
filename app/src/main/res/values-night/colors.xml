@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ========================================================= -->
+    <!-- NIGHT = DARK THEME: "Midnight Blue"                       -->
+    <!-- Android automatically uses this file (instead of          -->
+    <!-- values/colors.xml) when night mode is ON. The color       -->
+    <!-- NAMES must match values/colors.xml exactly.               -->
+    <!-- ========================================================= -->
+    <color name="bg_primary">#0F172A</color>     <!-- deep rich slate blue -->
+    <color name="bg_header">#1E293B</color>      <!-- slightly raised bars -->
+    <color name="bg_surface">#1E293B</color>     <!-- lighter blue-grey cards -->
+    <color name="text_primary">#F8FAFC</color>  <!-- icy off-white -->
+    <color name="text_secondary">#94A3B8</color><!-- slate grey -->
+    <color name="accent_red">#38BDF8</color>     <!-- glowing sky blue -->
+    <color name="nav_ripple">#4038BDF8</color>  <!-- translucent sky-blue ripple for tabs -->
+</resources>

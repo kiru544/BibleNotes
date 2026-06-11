@@ -15,6 +15,7 @@
         android:background="@color/bg_header"
         app:itemIconTint="@color/text_secondary"
         app:itemTextColor="@color/text_secondary"
+        app:itemBackground="@drawable/nav_item_ripple"
         app:menu="@menu/bottom_nav_menu" />
 
     <!-- Fragment container -->

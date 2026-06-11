@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  A ripple with a fixed radius. android:radius caps how far the circle
+  expands, so each tab gets a small centered "pop" instead of one that
+  fills the whole tab cell. Increase/decrease the radius to taste.
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/nav_ripple"
+    android:radius="26dp" />

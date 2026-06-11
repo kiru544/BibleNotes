@@ -4,15 +4,16 @@ package com.example.mbible
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.ListView
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.example.mbible.data.NotesDbHelper
 import com.example.mbible.data.BibleBooks
 
-class SettingsActivity : ComponentActivity() {
+class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+        ThemeManager.applyStatusBarIcons(this)
 
         val booksList = findViewById<ListView>(R.id.booksList)
 

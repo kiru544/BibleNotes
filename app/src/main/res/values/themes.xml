@@ -17,5 +17,24 @@
         <item name="android:background">@color/bg_header</item>
         <item name="itemIconTint">@color/text_secondary</item>
         <item name="itemTextColor">@color/text_secondary</item>
+        <item name="itemBackground">@drawable/nav_item_ripple</item>
+    </style>
+
+    <!-- Theme for alert dialogs (New note, Delete, etc.).
+         Everything here adapts to day/night via the @color names, and the
+         buttons use the accent color so they're readable on both themes. -->
+    <style name="ThemeOverlay.MBible.Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorSurface">@color/bg_surface</item>          <!-- dialog background -->
+        <item name="colorOnSurface">@color/text_primary</item>      <!-- title / body text -->
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:textColorHint">@color/text_secondary</item>
+        <item name="colorPrimary">@color/accent_red</item>         <!-- drives button text -->
+        <item name="buttonBarPositiveButtonStyle">@style/MBible.Dialog.Button</item>
+        <item name="buttonBarNegativeButtonStyle">@style/MBible.Dialog.Button</item>
+    </style>
+
+    <style name="MBible.Dialog.Button" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/accent_red</item>
     </style>
 </resources>

@@ -16,6 +16,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Make the status-bar icons readable on the current theme.
+        ThemeManager.applyStatusBarIcons(this)
+
         // 3. Initialize bottomNav FIRST
         bottomNav = findViewById(R.id.bottomNav)
 
