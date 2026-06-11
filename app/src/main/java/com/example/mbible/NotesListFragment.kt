@@ -1,6 +1,5 @@
 package com.example.mbible
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +9,7 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.example.mbible.data.NotesRepository
 
 class NotesListFragment(
@@ -56,7 +56,7 @@ class NotesListFragment(
         notesAdapter = NotesAdapter(
             onOpen = { note -> onOpenNote(note.id) },
             onDelete = { note ->
-                AlertDialog.Builder(requireContext())
+                MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_MBible_Dialog)
                     .setTitle("Delete note?")
                     .setMessage("This will permanently delete \"${note.title}\".")
                     .setPositiveButton("Delete") { _, _ ->
@@ -79,7 +79,7 @@ class NotesListFragment(
 
         btnNewNote.setOnClickListener {
             val input = EditText(requireContext()).apply { hint = "Note name" }
-            AlertDialog.Builder(requireContext())
+            MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_MBible_Dialog)
                 .setTitle("New note")
                 .setView(input)
                 .setPositiveButton("Create") { _, _ ->
@@ -129,7 +129,39 @@ class NotesListFragment(
         }
     }
 
+    // Asks for storage permission on Android 7-9, then writes the file if granted.
+    private val exportPermissionLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            writeLegacyExport()
+        } else {
+            android.widget.Toast.makeText(
+                requireContext(),
+                "Storage permission is needed to export",
+                android.widget.Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
     private fun exportNotes() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            // Android 10+ : write into Downloads via MediaStore (no permission needed).
+            exportViaMediaStore()
+        } else {
+            // Android 7-9 : MediaStore.Downloads doesn't exist; write a real File,
+            // which needs WRITE_EXTERNAL_STORAGE.
+            val perm = android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+            val granted = androidx.core.content.ContextCompat.checkSelfPermission(
+                requireContext(), perm
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+            if (granted) writeLegacyExport() else exportPermissionLauncher.launch(perm)
+        }
+    }
+
+    // Only ever called on API 29+, so the MediaStore.Downloads fields are safe here.
+    @androidx.annotation.RequiresApi(android.os.Build.VERSION_CODES.Q)
+    private fun exportViaMediaStore() {
         try {
             val json = notesRepo.exportToJson(requireContext())
             val fileName = "mbible_notes_${System.currentTimeMillis()}.json"
@@ -149,19 +181,47 @@ class NotesListFragment(
                 resolver.openOutputStream(it)?.use { stream ->
                     stream.write(json.toByteArray())
                 }
-                android.widget.Toast.makeText(
-                    requireContext(),
-                    "Exported to Downloads/$fileName",
-                    android.widget.Toast.LENGTH_LONG
-                ).show()
+                toastExported(fileName)
             }
         } catch (e: Exception) {
-            android.widget.Toast.makeText(
-                requireContext(),
-                "Export failed: ${e.message}",
-                android.widget.Toast.LENGTH_LONG
-            ).show()
+            toastExportFailed(e)
         }
+    }
+
+    // Legacy path for Android 7-9: write a File into the public Downloads folder.
+    private fun writeLegacyExport() {
+        try {
+            val json = notesRepo.exportToJson(requireContext())
+            val fileName = "mbible_notes_${System.currentTimeMillis()}.json"
+
+            @Suppress("DEPRECATION")
+            val downloads = android.os.Environment.getExternalStoragePublicDirectory(
+                android.os.Environment.DIRECTORY_DOWNLOADS
+            )
+            if (!downloads.exists()) downloads.mkdirs()
+
+            val file = java.io.File(downloads, fileName)
+            java.io.FileOutputStream(file).use { it.write(json.toByteArray()) }
+            toastExported(fileName)
+        } catch (e: Exception) {
+            toastExportFailed(e)
+        }
+    }
+
+    private fun toastExported(fileName: String) {
+        android.widget.Toast.makeText(
+            requireContext(),
+            "Exported to Downloads/$fileName",
+            android.widget.Toast.LENGTH_LONG
+        ).show()
+    }
+
+    private fun toastExportFailed(e: Exception) {
+        android.widget.Toast.makeText(
+            requireContext(),
+            "Export failed: ${e.message}",
+            android.widget.Toast.LENGTH_LONG
+        ).show()
     }
 
 }
