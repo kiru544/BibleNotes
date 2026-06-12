@@ -1,14 +1,14 @@
 package com.example.mbible
 
-
 import android.os.Bundle
-import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.mbible.data.NotesDbHelper
 import com.example.mbible.data.BibleBooks
 
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var adapter: SettingsBookAdapter
+    private val books = BibleBooks.ALL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,16 +16,7 @@ class SettingsActivity : AppCompatActivity() {
         ThemeManager.applyStatusBarIcons(this)
 
         val booksList = findViewById<ListView>(R.id.booksList)
-
-        val books = BibleBooks.ALL
-
-        val adapter = ArrayAdapter(
-            this,
-            R.layout.item_book,
-            R.id.bookName,
-            books
-        )
-
+        adapter = SettingsBookAdapter(this, books, BookAliasRepository(this))
         booksList.adapter = adapter
 
         booksList.setOnItemClickListener { _, _, position, _ ->
@@ -36,5 +27,11 @@ class SettingsActivity : AppCompatActivity() {
                 }
             )
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Refresh tags after returning from the alias editor.
+        adapter.notifyDataSetChanged()
     }
 }

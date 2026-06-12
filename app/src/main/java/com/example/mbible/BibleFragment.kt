@@ -36,6 +36,8 @@ class BibleFragment : Fragment() {
     private lateinit var btnThemeToggle: ImageButton
     private var isCardMode = true
     private lateinit var bookList: android.widget.ListView
+    private lateinit var bookListContainer: View
+    private lateinit var bookListHeader: TextView
 
     private lateinit var versePager: androidx.viewpager2.widget.ViewPager2
 
@@ -74,6 +76,9 @@ class BibleFragment : Fragment() {
         selectedBookTitle = view.findViewById(R.id.selectedBookTitle)
         btnSwitchMode = view.findViewById(R.id.btnSwitchMode)
         bookList = view.findViewById(R.id.bookList)
+        bookListContainer = view.findViewById(R.id.bookListContainer)
+        bookListHeader = view.findViewById(R.id.bookListHeader)
+        bookListHeader.text = "\u25C6 " + (if (testament == "New") "NEW TESTAMENT" else "OLD TESTAMENT")
         translationPicker = view.findViewById(R.id.translationPicker)
         versePager = view.findViewById(R.id.versePager)
 
@@ -96,13 +101,15 @@ class BibleFragment : Fragment() {
                 showChapters(bookName)
             }
 
-            val adapter = android.widget.ArrayAdapter(
-                requireContext(),
-                R.layout.item_book,
-                R.id.bookName,
-                books
-            )
-            bookList.adapter = adapter
+            // Build rich rows: abbreviation + name + chapter count.
+            val rows = books.map { name ->
+                BookListAdapter.BookRow(
+                    name = name,
+                    abbrev = abbrevFor(name),
+                    chapters = bibleRepo.getChapterCount(name, testament)
+                )
+            }
+            bookList.adapter = BookListAdapter(requireContext(), rows)
             bookList.setOnItemClickListener { _, _, position, _ ->
                 showChapters(books[position])
             }
@@ -113,10 +120,10 @@ class BibleFragment : Fragment() {
             isCardMode = !isCardMode
             if (isCardMode) {
                 bookPager.visibility = View.VISIBLE
-                bookList.visibility = View.GONE
+                bookListContainer.visibility = View.GONE
             } else {
                 bookPager.visibility = View.GONE
-                bookList.visibility = View.VISIBLE
+                bookListContainer.visibility = View.VISIBLE
             }
         }
 
@@ -133,10 +140,10 @@ class BibleFragment : Fragment() {
 
         if (isCardMode) {
             bookPager.visibility = View.VISIBLE
-            bookList.visibility = View.GONE
+            bookListContainer.visibility = View.GONE
         } else {
             bookPager.visibility = View.GONE
-            bookList.visibility = View.VISIBLE
+            bookListContainer.visibility = View.VISIBLE
         }
     }
 
@@ -161,7 +168,7 @@ class BibleFragment : Fragment() {
             }
         }
 
-        bookList.visibility = View.GONE
+        bookListContainer.visibility = View.GONE
     }
 
     private fun showVerses(bookName: String, chapter: Int) {
@@ -177,7 +184,7 @@ class BibleFragment : Fragment() {
         versePager.visibility = View.VISIBLE
         chaptersTopBar.visibility = View.VISIBLE
         bookPager.visibility = View.GONE
-        bookList.visibility = View.GONE
+        bookListContainer.visibility = View.GONE
 
         viewLifecycleOwner.lifecycleScope.launch {
             val chapterCount = bibleRepo.getChapterCount(bookName, testament)
@@ -208,6 +215,10 @@ class BibleFragment : Fragment() {
             else R.drawable.ic_moon
         )
     }
+
+    /** 3-char badge label, e.g. "Genesis" -> "Gen", "1 Samuel" -> "1Sa". */
+    private fun abbrevFor(name: String): String =
+        name.filter { !it.isWhitespace() }.take(3)
 
     private fun showTranslationMenu() {
         // Switch the pill to its accent "open" look while the menu is up.

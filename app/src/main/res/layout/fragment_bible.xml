@@ -119,16 +119,35 @@
         android:visibility="visible"/>
 
     <!-- Book list -->
-    <ListView
-        android:id="@+id/bookList"
+    <LinearLayout
+        android:id="@+id/bookListContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:divider="@drawable/divider_hairline"
-        android:dividerHeight="1dp"
-        android:paddingHorizontal="@dimen/screen_padding_h"
+        android:orientation="vertical"
         android:background="@color/bg_primary"
-        android:visibility="gone"/>
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/bookListHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/screen_padding_h"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:text="◆ OLD TESTAMENT"
+            android:textAppearance="@style/TextAppearance.Scriptorium.Eyebrow" />
+
+        <ListView
+            android:id="@+id/bookList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:divider="@drawable/divider_hairline"
+            android:dividerHeight="1dp"
+            android:paddingHorizontal="@dimen/screen_padding_h"
+            android:background="@color/bg_primary" />
+    </LinearLayout>
 
     <!-- Chapters / Verses recycler -->
     <androidx.recyclerview.widget.RecyclerView
