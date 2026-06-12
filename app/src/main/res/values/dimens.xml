@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ============================================================ -->
+    <!-- Scriptorium spacing & shape tokens                           -->
+    <!-- Radii are also baked into the drawables; these are here for   -->
+    <!-- layouts/code that need the raw values.                        -->
+    <!-- ============================================================ -->
+    <dimen name="radius_card">16dp</dimen>
+    <dimen name="radius_button">12dp</dimen>
+    <dimen name="radius_pill">999dp</dimen>
+    <dimen name="radius_badge">11dp</dimen>
+    <dimen name="radius_tile">13dp</dimen>
+
+    <dimen name="hairline">1dp</dimen>
+
+    <!-- Layout rhythm (from the handoff: 22dp screen gutters, 15dp rows) -->
+    <dimen name="screen_padding_h">22dp</dimen>
+    <dimen name="row_padding_v">15dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+    <dimen name="badge_size">42dp</dimen>
+
+    <!-- ============================================================ -->
+    <!-- Type scale (sp). Used by the text styles below.              -->
+    <!-- ============================================================ -->
+    <dimen name="text_eyebrow">11sp</dimen>
+    <dimen name="text_meta">11.5sp</dimen>
+    <dimen name="text_button">14sp</dimen>
+    <dimen name="text_item_title">17sp</dimen>
+    <dimen name="text_scripture">18.5sp</dimen>
+    <dimen name="text_screen_title">32sp</dimen>
+    <dimen name="text_chapter_title">38sp</dimen>
+</resources>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark: deep midnight ink on the sky-blue accent (readable contrast). -->
+    <color name="on_accent">#0E1626</color>
+</resources>

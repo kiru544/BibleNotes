@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Text/icon color that sits ON the accent fill (accent buttons).
+         Light: white on terracotta. -->
+    <color name="on_accent">#FFFFFF</color>
+</resources>

@@ -16,6 +16,11 @@ class AliasEditorActivity : AppCompatActivity() {
     private lateinit var aliasInput: EditText
     private lateinit var btnAddAlias: Button
     private lateinit var aliasesList: ListView
+    private lateinit var aliasBadge: TextView
+    private lateinit var aliasExplainer: TextView
+    private lateinit var aliasCountLabel: TextView
+    private lateinit var btnAliasBack: ImageButton
+    private lateinit var btnAliasTheme: ImageButton
 
     private val aliases = mutableListOf<String>()
     private lateinit var adapter: AliasListAdapter
@@ -28,26 +33,40 @@ class AliasEditorActivity : AppCompatActivity() {
         setContentView(R.layout.activity_alias_editor)
         ThemeManager.applyStatusBarIcons(this)
 
-        // init
         aliasRepo = BookAliasRepository(this)
         book = intent.getStringExtra(EXTRA_BOOK) ?: "Book"
 
-        // views
         bookTitle = findViewById(R.id.bookTitle)
         aliasInput = findViewById(R.id.aliasInput)
         btnAddAlias = findViewById(R.id.btnAddAlias)
         aliasesList = findViewById(R.id.aliasesList)
+        aliasBadge = findViewById(R.id.aliasBadge)
+        aliasExplainer = findViewById(R.id.aliasExplainer)
+        aliasCountLabel = findViewById(R.id.aliasCountLabel)
+        btnAliasBack = findViewById(R.id.btnAliasBack)
+        btnAliasTheme = findViewById(R.id.btnAliasTheme)
 
         bookTitle.text = book
+        aliasBadge.text = book.take(3)
+        aliasExplainer.text = "Type any of these in a note and it resolves to $book."
 
-        // adapter FIRST
+        btnAliasBack.setOnClickListener { finish() }
+
+        btnAliasTheme.setImageResource(
+            if (ThemeManager.isDark(this)) R.drawable.ic_sun else R.drawable.ic_moon
+        )
+        btnAliasTheme.setOnClickListener {
+            ThemeManager.toggleTheme(this)
+            recreate()
+        }
+
         adapter = AliasListAdapter(
             this,
             aliases,
             onDelete = { alias ->
                 AlertDialog.Builder(this)
                     .setTitle("Delete short name?")
-                    .setMessage("Remove “$alias” from $book?")
+                    .setMessage("Remove \u201C$alias\u201D from $book?")
                     .setPositiveButton("Delete") { _, _ ->
                         aliasRepo.deleteAlias(alias)
                         loadAliases()
@@ -58,10 +77,8 @@ class AliasEditorActivity : AppCompatActivity() {
         )
         aliasesList.adapter = adapter
 
-        // load from DB
         loadAliases()
 
-        // add alias
         btnAddAlias.setOnClickListener {
             val raw = aliasInput.text.toString().trim()
             if (raw.isEmpty()) return@setOnClickListener
@@ -81,5 +98,6 @@ class AliasEditorActivity : AppCompatActivity() {
         aliases.clear()
         aliases.addAll(aliasRepo.getAliasesForBook(book))
         adapter.notifyDataSetChanged()
+        aliasCountLabel.text = "\u25C6 SHORT NAMES \u00B7 ${aliases.size}"
     }
 }

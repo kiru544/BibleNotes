@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- ========================================================= -->
-    <!-- NIGHT = DARK THEME: "Midnight Blue"                       -->
-    <!-- Android automatically uses this file (instead of          -->
-    <!-- values/colors.xml) when night mode is ON. The color       -->
+    <!-- NIGHT = DARK THEME: "Scriptorium" (Midnight)             -->
+    <!-- Deep midnight blue. Android uses this file instead of     -->
+    <!-- res/values/colors.xml when night mode is ON. The color    -->
     <!-- NAMES must match values/colors.xml exactly.               -->
     <!-- ========================================================= -->
-    <color name="bg_primary">#0F172A</color>     <!-- deep rich slate blue -->
-    <color name="bg_header">#1E293B</color>      <!-- slightly raised bars -->
-    <color name="bg_surface">#1E293B</color>     <!-- lighter blue-grey cards -->
-    <color name="text_primary">#F8FAFC</color>  <!-- icy off-white -->
-    <color name="text_secondary">#94A3B8</color><!-- slate grey -->
-    <color name="accent_red">#38BDF8</color>     <!-- glowing sky blue -->
-    <color name="nav_ripple">#4038BDF8</color>  <!-- translucent sky-blue ripple for tabs -->
+
+    <!--  existing names (values updated)  -->
+    <color name="bg_primary">#0E1626</color>      <!-- page background (deep midnight) -->
+    <color name="bg_header">#172339</color>       <!-- bars -->
+    <color name="bg_surface">#172339</color>      <!-- cards, sheets -->
+    <color name="text_primary">#ECF1FA</color>    <!-- primary ink -->
+    <color name="text_secondary">#95A4BE</color>  <!-- secondary ink -->
+    <color name="accent_red">#6FB2EC</color>      <!-- accent (sky blue) -->
+    <color name="nav_ripple">#406FB2EC</color>    <!-- tab ripple -->
+
+    <!--  NEW tokens (added in this redesign) -->
+    <color name="surface_alt">#1E2D49</color>     <!-- book badges, chapter tiles, icon chips -->
+    <color name="hairline">#28395A</color>        <!-- 1px borders / dividers / rules -->
+    <color name="text_tertiary">#5E7297</color>   <!-- verse numbers, dates, eyebrow meta -->
+    <color name="accent_soft">#246FB2EC</color>   <!-- accent wash (~14% accent): chips, active tab, highlight bg -->
 </resources>

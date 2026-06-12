@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -32,7 +33,7 @@ class BibleFragment : Fragment() {
     private lateinit var books: List<String>
 
     private lateinit var btnSwitchMode: Button
-    private lateinit var btnThemeToggle: Button
+    private lateinit var btnThemeToggle: ImageButton
     private var isCardMode = true
     private lateinit var bookList: android.widget.ListView
 
@@ -76,9 +77,9 @@ class BibleFragment : Fragment() {
         translationPicker = view.findViewById(R.id.translationPicker)
         versePager = view.findViewById(R.id.versePager)
 
-        // Theme toggle: show the right label, and flip the theme on tap.
+        // Theme toggle: show the right icon, and flip the theme on tap.
         btnThemeToggle = view.findViewById(R.id.btnThemeToggle)
-        updateThemeButtonLabel()
+        updateThemeButtonIcon()
         btnThemeToggle.setOnClickListener {
             ThemeManager.toggleTheme(requireContext())
             // Recreate the activity so the new colors are applied everywhere.
@@ -200,16 +201,17 @@ class BibleFragment : Fragment() {
         translationPicker.text = "${bibleRepo.activeTranslation.abbreviation} ▾"
     }
 
-    /** Shows the theme the user will switch TO, so the button reads as an action. */
-    private fun updateThemeButtonLabel() {
-        btnThemeToggle.text = if (ThemeManager.isDark(requireContext())) {
-            "☀️ Light"
-        } else {
-            "🌙 Dark"
-        }
+    /** Shows the icon for the theme the user will switch TO. */
+    private fun updateThemeButtonIcon() {
+        btnThemeToggle.setImageResource(
+            if (ThemeManager.isDark(requireContext())) R.drawable.ic_sun
+            else R.drawable.ic_moon
+        )
     }
 
     private fun showTranslationMenu() {
+        // Switch the pill to its accent "open" look while the menu is up.
+        translationPicker.setBackgroundResource(R.drawable.bg_pill_accent)
         val popup = android.widget.PopupMenu(requireContext(), translationPicker)
         val translations = com.example.mbible.data.Translations.ALL
         translations.forEachIndexed { index, t ->
@@ -221,6 +223,9 @@ class BibleFragment : Fragment() {
             updateTranslationLabel()
             refreshCurrentView()
             true
+        }
+        popup.setOnDismissListener {
+            translationPicker.setBackgroundResource(R.drawable.bg_pill)
         }
         popup.show()
     }

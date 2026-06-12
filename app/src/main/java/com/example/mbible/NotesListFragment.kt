@@ -70,12 +70,6 @@ class NotesListFragment(
 
         notesRecycler.layoutManager = LinearLayoutManager(requireContext())
         notesRecycler.adapter = notesAdapter
-        notesRecycler.addItemDecoration(
-            androidx.recyclerview.widget.DividerItemDecoration(
-                requireContext(),
-                androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
-            )
-        )
 
         btnNewNote.setOnClickListener {
             val input = EditText(requireContext()).apply { hint = "Note name" }

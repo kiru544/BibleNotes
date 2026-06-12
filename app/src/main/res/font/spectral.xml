@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Spectral (serif) — scripture, titles, headings, drop caps.
+  Reference as @font/spectral, then pick a weight with android:textFontWeight (API 28+)
+  or app:fontWeight in a style. For simple cases you can also point a view straight at a
+  single weight file, e.g. @font/spectral_semibold.
+  The app: namespace makes weight selection work via AppCompat down to your minSdk 24.
+-->
+<font-family xmlns:app="http://schemas.android.com/apk/res-auto">
+    <font app:fontStyle="normal" app:fontWeight="400" app:font="@font/spectral_regular" />
+    <font app:fontStyle="normal" app:fontWeight="500" app:font="@font/spectral_medium" />
+    <font app:fontStyle="normal" app:fontWeight="600" app:font="@font/spectral_semibold" />
+</font-family>

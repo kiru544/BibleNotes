@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 1dp hairline divider. For a ListView: android:divider="@drawable/divider_hairline"
+     android:dividerHeight="1dp". For RecyclerView, use as a DividerItemDecoration drawable. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <size android:height="1dp" />
+    <solid android:color="@color/hairline" />
+</shape>

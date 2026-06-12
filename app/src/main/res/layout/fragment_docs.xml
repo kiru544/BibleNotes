@@ -6,11 +6,44 @@
     android:layout_height="match_parent"
     android:background="@color/bg_primary">
 
+    <!-- Masthead -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/screen_padding_h"
+        android:paddingTop="22dp"
+        android:paddingBottom="6dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="◆ DOCUMENTS"
+            android:textAppearance="@style/TextAppearance.Scriptorium.Eyebrow" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Library"
+            android:textAppearance="@style/TextAppearance.Scriptorium.ScreenTitle" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Reference texts"
+            android:textAppearance="@style/TextAppearance.Scriptorium.Meta" />
+    </LinearLayout>
+
     <ListView
         android:id="@+id/docsList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:divider="@drawable/divider_hairline"
         android:dividerHeight="1dp"
+        android:paddingHorizontal="@dimen/screen_padding_h"
+        android:paddingTop="6dp"
         android:background="@color/bg_primary" />
 
 </LinearLayout>

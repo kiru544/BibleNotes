@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -8,16 +9,19 @@
     android:background="@color/bg_primary"
     android:padding="32dp">
 
-    <androidx.cardview.widget.CardView
+    <!-- MaterialCardView IS-A CardView, so BookPagerAdapter's CardView cast still works,
+         and we gain a hairline stroke. -->
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/bookCard"
-        android:layout_width="220dp"
-        android:layout_height="280dp"
+        android:layout_width="198dp"
+        android:layout_height="268dp"
         android:clickable="true"
         android:focusable="true"
-        app:cardCornerRadius="16dp"
+        app:cardCornerRadius="6dp"
         app:cardBackgroundColor="@color/bg_surface"
-        app:cardElevation="8dp"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        app:cardElevation="3dp"
+        app:strokeColor="@color/hairline"
+        app:strokeWidth="1dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,24 +31,21 @@
 
             <ImageView
                 android:id="@+id/bookImage"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="84dp"
+                android:layout_height="84dp"
                 android:src="@android:drawable/ic_menu_agenda"
-                android:tint="@color/text_secondary"
+                android:tint="@color/text_tertiary"
                 android:scaleType="centerInside"/>
-
         </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <TextView
         android:id="@+id/bookName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:textColor="@color/text_primary"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:gravity="center"/>
+        android:layout_marginTop="22dp"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.Scriptorium.ScreenTitle"
+        android:textSize="26sp" />
 
 </LinearLayout>

@@ -36,6 +36,11 @@ class VersePagerAdapter(
             val verses = bibleRepo.getVerses(bookName, testament, chapter)
             val adapter = VerseAdapter(verses)
             holder.textView.text = adapter.buildSpannable(holder.itemView.context)
+            // Justify the column on Android 8+ (falls back to left-aligned below).
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                holder.textView.justificationMode =
+                    android.text.Layout.JUSTIFICATION_MODE_INTER_WORD
+            }
         }
     }
 

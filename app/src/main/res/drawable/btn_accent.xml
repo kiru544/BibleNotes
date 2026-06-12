@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Primary accent button: solid accent fill, radius 12dp, white-press ripple.
+     Use on a TextView/AppCompatButton (see INSTALL note re: MaterialButton).
+     Text color: @color/on_accent. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#33FFFFFF">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/accent_red" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+</ripple>
