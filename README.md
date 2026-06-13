@@ -1,6 +1,6 @@
 # BibleNotes - BETA 📖
 
-*Last updated: 11/6/26*
+*Last updated: 13/6/26*
 
 A Bible reading and note-taking app for Android.
 
@@ -126,11 +126,10 @@ KJV and the Catechism work out of the box. For NIV and other remote translations
 ### Main
 
 * Fix NIV verse layout
-
   * NIV has some notes in the verses that are not in KJV, so I need to understand them and design proper layouts for the Bible and notes.
-  * Design the book covers.
-  * Improve UI designs and layouts.
-  * Make the app more visually appealing and add more custom themes.
+  * Understand the API of NIV and design a reader system for it
+* Design the book covers.
+* Fix the date on notes
 
 ### Small
 
@@ -151,7 +150,10 @@ KJV is public domain. Modern translations like NIV are copyrighted and accessed 
 The Catechism PDF is included as a reference document. Check the source or edition you are using for any redistribution terms that apply.
 
 ---
-Logs:
-11/06/26 patch 0.2: added light theme with some UI/UX improvements
 
+Logs:
+11/06/26: added light theme with some UI/UX improvements
+13/06/26: UI/UX up-to-date with the design, with some adjustments
+
+---
 *Personal project — built to actually use.*
