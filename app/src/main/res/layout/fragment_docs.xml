@@ -6,34 +6,52 @@
     android:layout_height="match_parent"
     android:background="@color/bg_primary">
 
-    <!-- Masthead -->
+    <!-- Masthead row: title block + theme toggle (top-right, consistent corner) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:paddingHorizontal="@dimen/screen_padding_h"
-        android:paddingTop="22dp"
+        android:paddingTop="14dp"
         android:paddingBottom="6dp">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="◆ DOCUMENTS"
-            android:textAppearance="@style/TextAppearance.Scriptorium.Eyebrow" />
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="Library"
-            android:textAppearance="@style/TextAppearance.Scriptorium.ScreenTitle" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="◆ DOCUMENTS"
+                android:textAppearance="@style/TextAppearance.Scriptorium.Eyebrow" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="Reference texts"
-            android:textAppearance="@style/TextAppearance.Scriptorium.Meta" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Library"
+                android:textAppearance="@style/TextAppearance.Scriptorium.ScreenTitle" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Reference texts"
+                android:textAppearance="@style/TextAppearance.Scriptorium.Meta" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnThemeToggle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="top"
+            android:src="@drawable/ic_moon"
+            android:background="@drawable/icon_button_bg"
+            android:scaleType="centerInside"
+            android:padding="9dp"
+            android:contentDescription="Toggle theme" />
     </LinearLayout>
 
     <ListView

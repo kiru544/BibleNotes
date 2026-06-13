@@ -7,14 +7,14 @@
     android:layout_height="match_parent"
     android:background="@color/bg_primary">
 
-    <!-- Masthead with New button at right -->
+    <!-- Masthead: title block + theme toggle + New -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="bottom"
         android:paddingHorizontal="@dimen/screen_padding_h"
-        android:paddingTop="22dp"
+        android:paddingTop="14dp"
         android:paddingBottom="8dp">
 
         <LinearLayout
@@ -37,10 +37,23 @@
                 android:textAppearance="@style/TextAppearance.Scriptorium.ScreenTitle" />
         </LinearLayout>
 
+        <ImageButton
+            android:id="@+id/btnThemeToggle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_moon"
+            android:background="@drawable/icon_button_bg"
+            android:scaleType="centerInside"
+            android:padding="9dp"
+            android:contentDescription="Toggle theme" />
+
         <Button
             android:id="@+id/btnNewNote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:text="+ New"
             android:textAllCaps="false"
             android:textSize="14sp"
@@ -52,7 +65,7 @@
             app:cornerRadius="12dp" />
     </LinearLayout>
 
-    <!-- Notes list (cards float on the page; no surface box) -->
+    <!-- Notes list -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notesRecycler"
         android:layout_width="match_parent"

@@ -43,9 +43,7 @@ class NotesFragment : Fragment() {
     }
 
     private fun buildNotesList(): Fragment {
-        return NotesListFragment { noteId ->
-            openEditor(noteId)
-        }
+        return NotesListFragment()
     }
 
     fun openEditor(noteId: Long) {

@@ -12,9 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.example.mbible.data.NotesRepository
 
-class NotesListFragment(
-    private val onOpenNote: (Long) -> Unit
-) : Fragment() {
+class NotesListFragment : Fragment() {
 
     private lateinit var notesRepo: NotesRepository
     private lateinit var notesAdapter: NotesAdapter
@@ -34,6 +32,7 @@ class NotesListFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        ThemeManager.bindThemeToggle(view.findViewById(R.id.btnThemeToggle), requireActivity())
 
         val notesRecycler = view.findViewById<RecyclerView>(R.id.notesRecycler)
         val btnNewNote = view.findViewById<Button>(R.id.btnNewNote)
@@ -54,7 +53,7 @@ class NotesListFragment(
         }
 
         notesAdapter = NotesAdapter(
-            onOpen = { note -> onOpenNote(note.id) },
+            onOpen = { note -> openNote(note.id) },
             onDelete = { note ->
                 MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_MBible_Dialog)
                     .setTitle("Delete note?")
@@ -80,7 +79,7 @@ class NotesListFragment(
                     val title = input.text.toString().trim().ifEmpty { "New Note" }
                     val newId = notesRepo.create(title)
                     refreshNotes()
-                    onOpenNote(newId)
+                    openNote(newId)
                 }
                 .setNegativeButton("Cancel", null)
                 .show()
@@ -218,4 +217,7 @@ class NotesListFragment(
         ).show()
     }
 
+    private fun openNote(id: Long) {
+        (parentFragment as? NotesFragment)?.openEditor(id)
+    }
 }

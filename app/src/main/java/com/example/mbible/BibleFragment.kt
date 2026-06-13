@@ -221,24 +221,59 @@ class BibleFragment : Fragment() {
         name.filter { !it.isWhitespace() }.take(3)
 
     private fun showTranslationMenu() {
-        // Switch the pill to its accent "open" look while the menu is up.
+        // Accent "open" look on the pill while the popup is up.
         translationPicker.setBackgroundResource(R.drawable.bg_pill_accent)
-        val popup = android.widget.PopupMenu(requireContext(), translationPicker)
-        val translations = com.example.mbible.data.Translations.ALL
-        translations.forEachIndexed { index, t ->
-            popup.menu.add(0, index, index, "${t.abbreviation} — ${t.displayName}")
+
+        val inflater = LayoutInflater.from(requireContext())
+        val content = inflater.inflate(R.layout.popup_translation, null)
+        val rows = content.findViewById<android.widget.LinearLayout>(R.id.translationRows)
+
+        val widthPx = (300 * resources.displayMetrics.density).toInt()
+        val popup = android.widget.PopupWindow(
+            content, widthPx, ViewGroup.LayoutParams.WRAP_CONTENT, true
+        )
+        popup.elevation = 14f
+        popup.setBackgroundDrawable(
+            android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT)
+        )
+        popup.isOutsideTouchable = true
+
+        val activeId = bibleRepo.activeTranslation.id
+        val accent = requireContext().getColor(R.color.accent_red)
+
+        for (t in com.example.mbible.data.Translations.ALL) {
+            val row = inflater.inflate(R.layout.item_translation, rows, false)
+            val abbrev = row.findViewById<TextView>(R.id.trAbbrev)
+            val name = row.findViewById<TextView>(R.id.trName)
+            val check = row.findViewById<android.widget.ImageView>(R.id.trCheck)
+
+            abbrev.text = t.abbreviation
+            name.text = t.displayName
+
+            if (t.id == activeId) {
+                row.setBackgroundResource(R.drawable.bg_row_active)
+                abbrev.setTextColor(accent)
+                name.setTextColor(accent)
+                check.visibility = View.VISIBLE
+            }
+
+            row.setOnClickListener {
+                bibleRepo.setActiveTranslation(t.id)
+                updateTranslationLabel()
+                refreshCurrentView()
+                popup.dismiss()
+            }
+            rows.addView(row)
         }
-        popup.setOnMenuItemClickListener { item ->
-            val chosen = translations[item.itemId]
-            bibleRepo.setActiveTranslation(chosen.id)
-            updateTranslationLabel()
-            refreshCurrentView()
-            true
-        }
+
         popup.setOnDismissListener {
             translationPicker.setBackgroundResource(R.drawable.bg_pill)
         }
-        popup.show()
+
+        // Center the card under the pill, dropped 8dp below it.
+        val yOff = (8 * resources.displayMetrics.density).toInt()
+        val xOff = (translationPicker.width - widthPx) / 2
+        popup.showAsDropDown(translationPicker, xOff, yOff)
     }
 
     private fun refreshCurrentView() {

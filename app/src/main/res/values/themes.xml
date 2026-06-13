@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="Theme.MBible" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.MBible" parent="Theme.MaterialComponents.DayNight.NoActionBar"
+        tools:targetApi="29">
         <item name="colorPrimary">@color/bg_surface</item>
         <item name="colorPrimaryVariant">@color/bg_header</item>
         <item name="colorOnPrimary">@color/text_primary</item>
@@ -11,29 +12,35 @@
         <item name="android:textColor">@color/text_primary</item>
         <item name="android:textColorHint">@color/text_secondary</item>
         <item name="bottomNavigationStyle">@style/NavStyle</item>
+
+        <!-- Transparent system bars; the page bg shows behind the status bar and
+             the bottom nav's bg_header extends behind the system nav bar.
+             The enforce* items (API 29+) prevent an auto contrast scrim. -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:enforceStatusBarContrast">false</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
     </style>
 
     <!-- ===================== BOTTOM NAV (Scriptorium) ===================== -->
-    <!-- Active item now gets an accent_soft pill behind the icon (Material
-         "active indicator"), and icon+label switch to accent via the
-         nav_item_color selector. Labels use Archivo. -->
     <style name="NavStyle" parent="Widget.MaterialComponents.BottomNavigationView">
         <item name="android:background">@color/bg_header</item>
         <item name="itemIconTint">@color/nav_item_color</item>
         <item name="itemTextColor">@color/nav_item_color</item>
-        <item name="itemRippleColor">@color/nav_ripple</item>
+        <!-- No ripple: the active pill is the only selection effect (matches the
+             design and removes the "multiple overlapping effects"). -->
+        <item name="itemRippleColor">@android:color/transparent</item>
         <item name="labelVisibilityMode">labeled</item>
         <item name="itemActiveIndicatorStyle">@style/Nav.ActiveIndicator</item>
         <item name="itemTextAppearanceActive">@style/Nav.Label</item>
         <item name="itemTextAppearanceInactive">@style/Nav.Label</item>
     </style>
 
-    <!-- The accent_soft pill behind the selected tab's icon. -->
+    <!-- The accent pill behind the selected tab's icon. Centered, no side margin. -->
     <style name="Nav.ActiveIndicator" parent="">
         <item name="android:color">@color/accent_soft</item>
-        <item name="android:width">62dp</item>
-        <item name="android:height">34dp</item>
-        <item name="marginHorizontal">10dp</item>
+        <item name="android:width">56dp</item>
+        <item name="android:height">27dp</item>
         <item name="shapeAppearance">@style/Nav.Indicator.Shape</item>
     </style>
 

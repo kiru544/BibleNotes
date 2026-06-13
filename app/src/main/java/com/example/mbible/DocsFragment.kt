@@ -21,7 +21,7 @@ class DocsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        ThemeManager.bindThemeToggle(view.findViewById(R.id.btnThemeToggle), requireActivity())
         val docsList = view.findViewById<ListView>(R.id.docsList)
         val docs = listOf("Catechism of the Catholic Church")
 
