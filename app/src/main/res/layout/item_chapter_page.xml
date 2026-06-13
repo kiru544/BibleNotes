@@ -3,15 +3,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:scrollbars="none">
 
     <TextView
         android:id="@+id/chapterText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:paddingHorizontal="@dimen/screen_padding_h"
+        android:paddingTop="6dp"
+        android:paddingBottom="28dp"
+        android:fontFamily="@font/spectral_regular"
         android:textColor="@color/text_primary"
-        android:textSize="17sp"
-        android:lineSpacingExtra="6dp" />
-
+        android:textSize="18.5sp"
+        android:lineSpacingMultiplier="1.82" />
 </ScrollView>

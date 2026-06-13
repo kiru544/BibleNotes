@@ -84,6 +84,16 @@ class NotesRepository(context: Context) {
         return jsonArray.toString(2)
     }
 
+    /** Exports a single note in the same array format, so it re-imports cleanly. */
+    fun exportOneToJson(id: Long): String {
+        val note = getById(id) ?: return "[]"
+        val obj = org.json.JSONObject()
+        obj.put("title", note.title)
+        obj.put("body", note.body)
+        obj.put("updated_at", note.updatedAt)
+        return org.json.JSONArray().put(obj).toString(2)
+    }
+
     fun importFromJson(json: String): Int {
         val jsonArray = org.json.JSONArray(json)
         var count = 0

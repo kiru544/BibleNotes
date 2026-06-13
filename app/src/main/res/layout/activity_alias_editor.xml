@@ -1,66 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/bg_primary"
-    android:fitsSystemWindows="true"
-    android:padding="16dp">
+    android:fitsSystemWindows="true">
 
-    <TextView
-        android:id="@+id/bookTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Book"
-        android:textColor="@color/text_primary"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:paddingBottom="12dp"/>
-
-    <!-- Add alias row -->
+    <!-- Top app bar: back + centered title + theme toggle -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="8dp">
 
-        <EditText
-            android:id="@+id/aliasInput"
+        <ImageButton
+            android:id="@+id/btnAliasBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_chevron_left"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:padding="8dp"
+            android:contentDescription="Back" />
+
+        <TextView
+            android:id="@+id/bookTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Add short name"
+            android:gravity="center"
+            android:text="Book"
+            android:fontFamily="@font/spectral_semibold"
             android:textColor="@color/text_primary"
-            android:textColorHint="@color/text_secondary"
-            android:background="@color/bg_surface"
-            android:padding="12dp"
-            android:singleLine="true"
-            android:imeOptions="actionDone"/>
+            android:textSize="20sp" />
 
-        <Button
-            android:id="@+id/btnAddAlias"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add"
-            android:textAllCaps="false"
-            android:layout_marginStart="10dp"/>
+        <ImageButton
+            android:id="@+id/btnAliasTheme"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_moon"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:padding="9dp"
+            android:contentDescription="Toggle theme" />
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Short names:"
-        android:textColor="@color/text_secondary"
-        android:textSize="16sp"
-        android:paddingTop="14dp"
-        android:paddingBottom="8dp"/>
-
-    <ListView
-        android:id="@+id/aliasesList"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:dividerHeight="1dp"
-        android:background="@color/bg_primary"/>
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/screen_padding_h"
+        android:paddingTop="6dp">
+
+        <!-- Explainer card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_card"
+            android:padding="14dp">
+
+            <TextView
+                android:id="@+id/aliasBadge"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:gravity="center"
+                android:text="Gen"
+                android:background="@drawable/bg_badge_accent"
+                android:fontFamily="@font/archivo_bold"
+                android:textColor="@color/on_accent"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/aliasExplainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="14dp"
+                android:fontFamily="@font/archivo_regular"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:lineSpacingMultiplier="1.25"
+                android:text="Type any of these in a note and it resolves to this book." />
+        </LinearLayout>
+
+        <!-- Add row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="16dp">
+
+            <EditText
+                android:id="@+id/aliasInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Add a short name"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_tertiary"
+                android:fontFamily="monospace"
+                android:textSize="15sp"
+                android:background="@drawable/bg_input"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="13dp"
+                android:singleLine="true"
+                android:imeOptions="actionDone"/>
+
+            <Button
+                android:id="@+id/btnAddAlias"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+ Add"
+                android:textAllCaps="false"
+                android:fontFamily="@font/archivo_semibold"
+                android:textColor="@color/on_accent"
+                android:minWidth="0dp"
+                android:paddingHorizontal="20dp"
+                app:backgroundTint="@color/accent_red"
+                app:cornerRadius="12dp"
+                android:layout_marginStart="10dp"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Lowercased automatically; spaces and dots are removed."
+            android:textAppearance="@style/TextAppearance.Scriptorium.Meta" />
+
+        <TextView
+            android:id="@+id/aliasCountLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="◆ SHORT NAMES"
+            android:textAppearance="@style/TextAppearance.Scriptorium.Eyebrow"
+            android:paddingTop="20dp"
+            android:paddingBottom="10dp"/>
+
+        <ListView
+            android:id="@+id/aliasesList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="10dp"
+            android:background="@color/bg_primary"/>
+    </LinearLayout>
 </LinearLayout>

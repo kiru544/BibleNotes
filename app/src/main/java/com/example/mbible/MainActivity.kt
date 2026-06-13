@@ -22,6 +22,20 @@ class MainActivity : AppCompatActivity() {
         // 3. Initialize bottomNav FIRST
         bottomNav = findViewById(R.id.bottomNav)
 
+        // Edge-to-edge: draw behind the system bars and apply the insets ourselves
+        // so the bottom nav's background extends behind the system navigation bar
+        // (covers the bottom consistently in both light and dark themes).
+        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false)
+        val root = findViewById<View>(R.id.rootMain)
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
+            val bars = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars())
+            v.setPadding(v.paddingLeft, bars.top, v.paddingRight, 0)
+            bottomNav.setPadding(
+                bottomNav.paddingLeft, bottomNav.paddingTop, bottomNav.paddingRight, bars.bottom
+            )
+            insets
+        }
+
         // 4. Load default fragment
         if (savedInstanceState == null) {
             switchFragment(BibleFragment.newInstance("Old"))

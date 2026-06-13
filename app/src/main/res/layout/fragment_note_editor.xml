@@ -1,60 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_primary"
-    android:padding="12dp">
+    android:paddingHorizontal="@dimen/screen_padding_h"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
 
-    <!-- Title + Save row -->
-    <FrameLayout
+    <!-- Chrome: back chevron + centered title + accent Save -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:paddingBottom="10dp">
 
-        <TextView
-            android:id="@+id/noteTitleText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="New Note"
-            android:textColor="@color/text_primary"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:paddingVertical="6dp"
-            android:clickable="true"
-            android:focusable="true" />
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_chevron_left"
+            android:background="@drawable/icon_button_bg"
+            android:scaleType="centerInside"
+            android:padding="8dp"
+            android:contentDescription="Back" />
 
-        <EditText
-            android:id="@+id/noteTitleEdit"
-            android:layout_width="220dp"
+        <FrameLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            android:singleLine="true"
-            android:textColor="@color/text_primary"
-            android:textColorHint="@color/text_secondary"
-            android:hint="Title"
-            android:background="@color/bg_surface"
-            android:padding="8dp" />
+            android:layout_weight="1"
+            android:paddingHorizontal="8dp">
+
+            <TextView
+                android:id="@+id/noteTitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="New Note"
+                android:fontFamily="@font/spectral_semibold"
+                android:textColor="@color/text_primary"
+                android:textSize="20sp"
+                android:paddingVertical="6dp"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <EditText
+                android:id="@+id/noteTitleEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:singleLine="true"
+                android:gravity="center"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_secondary"
+                android:fontFamily="@font/spectral_semibold"
+                android:textSize="20sp"
+                android:hint="Title"
+                android:background="@android:color/transparent"
+                android:padding="6dp" />
+        </FrameLayout>
+
+        <ImageButton
+            android:id="@+id/btnExportNote"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_share"
+            android:background="@drawable/icon_button_bg"
+            android:scaleType="centerInside"
+            android:padding="9dp"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="Export note" />
 
         <Button
             android:id="@+id/btnSaveNote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
             android:text="Save"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:fontFamily="@font/archivo_semibold"
+            android:textColor="@color/on_accent"
+            android:minWidth="0dp"
+            android:paddingHorizontal="18dp"
+            app:backgroundTint="@color/accent_red"
+            app:cornerRadius="12dp" />
+    </LinearLayout>
 
-    </FrameLayout>
-
-    <!-- Verse highlight box — OUTSIDE FrameLayout -->
+    <!-- Reference chips -->
     <HorizontalScrollView
         android:id="@+id/verseHighlightScroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:scrollbars="none"
         android:layout_marginBottom="10dp">
 
         <LinearLayout
@@ -62,10 +104,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="@color/bg_surface"
-            android:padding="10dp"
             android:gravity="center_vertical"/>
-
     </HorizontalScrollView>
 
     <!-- Note body -->
@@ -77,8 +116,11 @@
         android:gravity="top"
         android:hint="Write your note…"
         android:textColor="@color/text_primary"
-        android:textColorHint="@color/text_secondary"
-        android:background="@color/bg_surface"
-        android:padding="12dp" />
+        android:textColorHint="@color/text_tertiary"
+        android:fontFamily="@font/spectral_regular"
+        android:textSize="17sp"
+        android:lineSpacingMultiplier="1.55"
+        android:background="@android:color/transparent"
+        android:paddingVertical="4dp" />
 
 </LinearLayout>

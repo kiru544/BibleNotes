@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Book abbreviation badge / icon chip: surface_alt fill, radius 11dp. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/surface_alt" />
+    <corners android:radius="11dp" />
+</shape>

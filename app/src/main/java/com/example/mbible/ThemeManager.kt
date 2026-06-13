@@ -55,13 +55,30 @@ object ThemeManager {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 
     /**
-     * Makes the status-bar icons dark on the light theme and light on the dark
-     * theme so they stay readable. Call from each Activity's onCreate.
+     * Makes the status-bar AND system navigation-bar icons readable for the
+     * current theme (dark icons on light, light icons on dark). The nav-bar
+     * *color* itself is set in themes.xml (android:navigationBarColor).
+     * Call from each Activity's onCreate.
      */
     fun applyStatusBarIcons(activity: android.app.Activity) {
         val lightIcons = !isDark(activity)
-        androidx.core.view.WindowInsetsControllerCompat(
+        val controller = androidx.core.view.WindowInsetsControllerCompat(
             activity.window, activity.window.decorView
-        ).isAppearanceLightStatusBars = lightIcons
+        )
+        controller.isAppearanceLightStatusBars = lightIcons
+        controller.isAppearanceLightNavigationBars = lightIcons
+    }
+    /**
+     * Wires up a theme-toggle ImageButton: shows the icon for the theme you'd
+     * switch TO, and flips the theme on tap. toggleTheme() recreates the activity
+     * itself (via setDefaultNightMode), so we must NOT call recreate() again here.
+     */
+    fun bindThemeToggle(button: android.widget.ImageButton, activity: android.app.Activity) {
+        button.setImageResource(
+            if (isDark(activity)) R.drawable.ic_sun else R.drawable.ic_moon
+        )
+        button.setOnClickListener {
+            toggleTheme(activity)
+        }
     }
 }

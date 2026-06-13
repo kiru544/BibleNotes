@@ -1,6 +1,5 @@
 package com.example.mbible
 
-import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
@@ -45,6 +44,23 @@ class NoteEditorFragment : Fragment() {
     private lateinit var verseHighlightScroll: View
     private lateinit var verseHighlightBox: android.widget.LinearLayout
 
+
+    // Lets the user choose where to save the single-note export. No storage permission needed.
+    private val exportLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        val id = currentNoteId
+        if (uri == null || id == null) return@registerForActivityResult
+        try {
+            val json = notesRepo.exportOneToJson(id)
+            requireContext().contentResolver.openOutputStream(uri)?.use { out ->
+                out.write(json.toByteArray())
+            }
+            android.widget.Toast.makeText(requireContext(), "Note exported", android.widget.Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            android.widget.Toast.makeText(requireContext(), "Export failed: ${e.message}", android.widget.Toast.LENGTH_LONG).show()
+        }
+    }
 
     private val refRegex =
         Regex("""(?i)\b([1-3]?\s*[a-z\.]+)\s*(\d{1,3})\s*:(\s*(\d{1,3})(?:\s*-\s*(\d{1,3}))?)?(?=\s|${'$'}|\W)""")
@@ -117,6 +133,20 @@ class NoteEditorFragment : Fragment() {
         btnSaveNote.setOnClickListener {
             saveNote()
             parentFragmentManager.popBackStack()
+        }
+
+        // Back chevron returns to the notes list (same as system back).
+        view.findViewById<View>(R.id.btnBack).setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
+
+        // Export just this note via the system file picker (no permissions needed).
+        view.findViewById<View>(R.id.btnExportNote).setOnClickListener {
+            saveNote()
+            val safeName = noteTitleText.text.toString().trim()
+                .replace(Regex("[^A-Za-z0-9 _-]"), "")
+                .ifEmpty { "note" }
+            exportLauncher.launch("$safeName.json")
         }
 
         noteTitleText.setOnClickListener { startTitleEdit() }
@@ -209,12 +239,8 @@ class NoteEditorFragment : Fragment() {
                     override fun onClick(widget: View) {
                         viewLifecycleOwner.lifecycleScope.launch {
                             val verses = bibleRepo.getVerseRange(canonical, ch, vsStart, vsEnd)
-                            val message = verses.joinToString("\n\n") { v -> "${v.verse}. ${v.text}" }
-                            AlertDialog.Builder(requireContext())
-                                .setTitle("$canonical $ch:$vsStart${if (vsEnd != vsStart) "-$vsEnd" else ""}")
-                                .setMessage(message)
-                                .setPositiveButton("Close", null)
-                                .show()
+                            val label = "$canonical $ch:$vsStart${if (vsEnd != vsStart) "-$vsEnd" else ""}"
+                            VerseSheet.show(requireContext(), label, verses)
                         }
                     }
 
@@ -282,33 +308,27 @@ class NoteEditorFragment : Fragment() {
                 text = label
                 textSize = 13f
                 setTextColor(requireContext().getColor(R.color.accent_red))
-                setPadding(16, 8, 16, 8)
+                typeface = androidx.core.content.res.ResourcesCompat.getFont(
+                    requireContext(), R.font.archivo_semibold
+                )
+                setBackgroundResource(R.drawable.bg_chip_accent)
+                setPadding(28, 14, 28, 14)
                 isClickable = true
                 isFocusable = true
                 setOnClickListener {
                     viewLifecycleOwner.lifecycleScope.launch {
                         val verses = bibleRepo.getVerseRange(canonical, ch, vsStart, vsEnd)
-                        val message = verses.joinToString("\n\n") { v -> "${v.verse}. ${v.text}" }
-                        android.app.AlertDialog.Builder(requireContext())
-                            .setTitle(label)
-                            .setMessage(message)
-                            .setPositiveButton("Close", null)
-                            .show()
+                        VerseSheet.show(requireContext(), label, verses)
                     }
                 }
             }
 
-            verseHighlightBox.addView(chip)
-
-            // Add separator dot between chips
-            if (index < refs.size - 1) {
-                val dot = TextView(requireContext()).apply {
-                    text = "  •  "
-                    textSize = 13f
-                    setTextColor(requireContext().getColor(R.color.text_secondary))
-                }
-                verseHighlightBox.addView(dot)
-            }
+            val lp = android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            if (index < refs.size - 1) lp.marginEnd = 16
+            verseHighlightBox.addView(chip, lp)
         }
     }
 }

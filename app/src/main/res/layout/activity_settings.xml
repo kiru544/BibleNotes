@@ -7,21 +7,44 @@
     android:background="@color/bg_primary"
     android:fitsSystemWindows="true">
 
-    <TextView
-        android:id="@+id/settingsTitle"
+    <!-- Masthead -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Book Short Names"
-        android:textColor="@color/text_primary"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:padding="16dp"/>
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/screen_padding_h"
+        android:paddingTop="22dp"
+        android:paddingBottom="6dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="◆ SETTINGS"
+            android:textAppearance="@style/TextAppearance.Scriptorium.Eyebrow" />
+
+        <TextView
+            android:id="@+id/settingsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Book short names"
+            android:textAppearance="@style/TextAppearance.Scriptorium.ScreenTitle" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Tap a book to add custom abbreviations"
+            android:textAppearance="@style/TextAppearance.Scriptorium.Meta" />
+    </LinearLayout>
 
     <ListView
         android:id="@+id/booksList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:divider="@drawable/divider_hairline"
         android:dividerHeight="1dp"
+        android:paddingHorizontal="@dimen/screen_padding_h"
+        android:paddingTop="6dp"
         android:background="@color/bg_primary"/>
 </LinearLayout>

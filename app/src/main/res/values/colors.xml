@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- ========================================================= -->
-    <!-- DEFAULT (DAY) = LIGHT THEME: "Sunrise Orange"             -->
-    <!-- These values are used whenever the device is NOT in       -->
-    <!-- night mode. The night-mode versions live in               -->
+    <!-- DEFAULT (DAY) = LIGHT THEME: "Scriptorium"                -->
+    <!-- Warm paper tones. Used whenever the device is NOT in      -->
+    <!-- night mode. The night versions live in                    -->
     <!-- res/values-night/colors.xml and use the SAME names so     -->
     <!-- every layout swaps automatically.                         -->
+    <!--                                                            -->
+    <!-- Android hex is #AARRGGBB (alpha first). The opaque colors  -->
+    <!-- below omit alpha (defaults to FF). nav_ripple and          -->
+    <!-- accent_soft are deliberately translucent.                  -->
     <!-- ========================================================= -->
-    <color name="bg_primary">#FFF7ED</color>     <!-- warm cream app background -->
-    <color name="bg_header">#FFFFFF</color>      <!-- white top/bottom bars -->
-    <color name="bg_surface">#FFFFFF</color>     <!-- white cards (Genesis card, notes) -->
-    <color name="text_primary">#292524</color>  <!-- warm charcoal (softer than black) -->
-    <color name="text_secondary">#78716C</color><!-- muted warm grey -->
-    <color name="accent_red">#F97316</color>     <!-- punchy sunrise orange -->
-    <color name="nav_ripple">#40F97316</color>  <!-- translucent orange ripple for tabs -->
+
+    <!-- existing names (values updated) -->
+    <color name="bg_primary">#FBF5EA</color>      <!-- page background (warm cream) -->
+    <color name="bg_header">#FFFDF8</color>       <!-- top/bottom bars -->
+    <color name="bg_surface">#FFFDF8</color>      <!-- cards, sheets -->
+    <color name="text_primary">#2A2521</color>    <!-- primary ink -->
+    <color name="text_secondary">#6E6357</color>  <!-- secondary ink -->
+    <color name="accent_red">#BC4B23</color>      <!-- accent (terracotta) -->
+    <color name="nav_ripple">#40BC4B23</color>    <!-- tab ripple (25% accent) -->
+
+    <!-- NEW tokens (added in this redesign) -->
+    <color name="surface_alt">#F4EAD8</color>     <!-- book badges, chapter tiles, icon chips -->
+    <color name="hairline">#E6DAC4</color>        <!-- 1px borders / dividers / rules -->
+    <color name="text_tertiary">#B49D7E</color>   <!-- verse numbers, dates, eyebrow meta -->
+    <color name="accent_soft">#1ABC4B23</color>   <!-- accent wash (~10% accent): chips, active tab, highlight bg -->
 </resources>

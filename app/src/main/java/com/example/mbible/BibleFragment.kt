@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -32,9 +33,11 @@ class BibleFragment : Fragment() {
     private lateinit var books: List<String>
 
     private lateinit var btnSwitchMode: Button
-    private lateinit var btnThemeToggle: Button
+    private lateinit var btnThemeToggle: ImageButton
     private var isCardMode = true
     private lateinit var bookList: android.widget.ListView
+    private lateinit var bookListContainer: View
+    private lateinit var bookListHeader: TextView
 
     private lateinit var versePager: androidx.viewpager2.widget.ViewPager2
 
@@ -73,12 +76,15 @@ class BibleFragment : Fragment() {
         selectedBookTitle = view.findViewById(R.id.selectedBookTitle)
         btnSwitchMode = view.findViewById(R.id.btnSwitchMode)
         bookList = view.findViewById(R.id.bookList)
+        bookListContainer = view.findViewById(R.id.bookListContainer)
+        bookListHeader = view.findViewById(R.id.bookListHeader)
+        bookListHeader.text = "\u25C6 " + (if (testament == "New") "NEW TESTAMENT" else "OLD TESTAMENT")
         translationPicker = view.findViewById(R.id.translationPicker)
         versePager = view.findViewById(R.id.versePager)
 
-        // Theme toggle: show the right label, and flip the theme on tap.
+        // Theme toggle: show the right icon, and flip the theme on tap.
         btnThemeToggle = view.findViewById(R.id.btnThemeToggle)
-        updateThemeButtonLabel()
+        updateThemeButtonIcon()
         btnThemeToggle.setOnClickListener {
             ThemeManager.toggleTheme(requireContext())
             // Recreate the activity so the new colors are applied everywhere.
@@ -95,13 +101,15 @@ class BibleFragment : Fragment() {
                 showChapters(bookName)
             }
 
-            val adapter = android.widget.ArrayAdapter(
-                requireContext(),
-                R.layout.item_book,
-                R.id.bookName,
-                books
-            )
-            bookList.adapter = adapter
+            // Build rich rows: abbreviation + name + chapter count.
+            val rows = books.map { name ->
+                BookListAdapter.BookRow(
+                    name = name,
+                    abbrev = abbrevFor(name),
+                    chapters = bibleRepo.getChapterCount(name, testament)
+                )
+            }
+            bookList.adapter = BookListAdapter(requireContext(), rows)
             bookList.setOnItemClickListener { _, _, position, _ ->
                 showChapters(books[position])
             }
@@ -112,10 +120,10 @@ class BibleFragment : Fragment() {
             isCardMode = !isCardMode
             if (isCardMode) {
                 bookPager.visibility = View.VISIBLE
-                bookList.visibility = View.GONE
+                bookListContainer.visibility = View.GONE
             } else {
                 bookPager.visibility = View.GONE
-                bookList.visibility = View.VISIBLE
+                bookListContainer.visibility = View.VISIBLE
             }
         }
 
@@ -132,10 +140,10 @@ class BibleFragment : Fragment() {
 
         if (isCardMode) {
             bookPager.visibility = View.VISIBLE
-            bookList.visibility = View.GONE
+            bookListContainer.visibility = View.GONE
         } else {
             bookPager.visibility = View.GONE
-            bookList.visibility = View.VISIBLE
+            bookListContainer.visibility = View.VISIBLE
         }
     }
 
@@ -160,7 +168,7 @@ class BibleFragment : Fragment() {
             }
         }
 
-        bookList.visibility = View.GONE
+        bookListContainer.visibility = View.GONE
     }
 
     private fun showVerses(bookName: String, chapter: Int) {
@@ -176,7 +184,7 @@ class BibleFragment : Fragment() {
         versePager.visibility = View.VISIBLE
         chaptersTopBar.visibility = View.VISIBLE
         bookPager.visibility = View.GONE
-        bookList.visibility = View.GONE
+        bookListContainer.visibility = View.GONE
 
         viewLifecycleOwner.lifecycleScope.launch {
             val chapterCount = bibleRepo.getChapterCount(bookName, testament)
@@ -200,29 +208,72 @@ class BibleFragment : Fragment() {
         translationPicker.text = "${bibleRepo.activeTranslation.abbreviation} ▾"
     }
 
-    /** Shows the theme the user will switch TO, so the button reads as an action. */
-    private fun updateThemeButtonLabel() {
-        btnThemeToggle.text = if (ThemeManager.isDark(requireContext())) {
-            "☀️ Light"
-        } else {
-            "🌙 Dark"
-        }
+    /** Shows the icon for the theme the user will switch TO. */
+    private fun updateThemeButtonIcon() {
+        btnThemeToggle.setImageResource(
+            if (ThemeManager.isDark(requireContext())) R.drawable.ic_sun
+            else R.drawable.ic_moon
+        )
     }
 
+    /** 3-char badge label, e.g. "Genesis" -> "Gen", "1 Samuel" -> "1Sa". */
+    private fun abbrevFor(name: String): String =
+        name.filter { !it.isWhitespace() }.take(3)
+
     private fun showTranslationMenu() {
-        val popup = android.widget.PopupMenu(requireContext(), translationPicker)
-        val translations = com.example.mbible.data.Translations.ALL
-        translations.forEachIndexed { index, t ->
-            popup.menu.add(0, index, index, "${t.abbreviation} — ${t.displayName}")
+        // Accent "open" look on the pill while the popup is up.
+        translationPicker.setBackgroundResource(R.drawable.bg_pill_accent)
+
+        val inflater = LayoutInflater.from(requireContext())
+        val content = inflater.inflate(R.layout.popup_translation, null)
+        val rows = content.findViewById<android.widget.LinearLayout>(R.id.translationRows)
+
+        val widthPx = (300 * resources.displayMetrics.density).toInt()
+        val popup = android.widget.PopupWindow(
+            content, widthPx, ViewGroup.LayoutParams.WRAP_CONTENT, true
+        )
+        popup.elevation = 14f
+        popup.setBackgroundDrawable(
+            android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT)
+        )
+        popup.isOutsideTouchable = true
+
+        val activeId = bibleRepo.activeTranslation.id
+        val accent = requireContext().getColor(R.color.accent_red)
+
+        for (t in com.example.mbible.data.Translations.ALL) {
+            val row = inflater.inflate(R.layout.item_translation, rows, false)
+            val abbrev = row.findViewById<TextView>(R.id.trAbbrev)
+            val name = row.findViewById<TextView>(R.id.trName)
+            val check = row.findViewById<android.widget.ImageView>(R.id.trCheck)
+
+            abbrev.text = t.abbreviation
+            name.text = t.displayName
+
+            if (t.id == activeId) {
+                row.setBackgroundResource(R.drawable.bg_row_active)
+                abbrev.setTextColor(accent)
+                name.setTextColor(accent)
+                check.visibility = View.VISIBLE
+            }
+
+            row.setOnClickListener {
+                bibleRepo.setActiveTranslation(t.id)
+                updateTranslationLabel()
+                refreshCurrentView()
+                popup.dismiss()
+            }
+            rows.addView(row)
         }
-        popup.setOnMenuItemClickListener { item ->
-            val chosen = translations[item.itemId]
-            bibleRepo.setActiveTranslation(chosen.id)
-            updateTranslationLabel()
-            refreshCurrentView()
-            true
+
+        popup.setOnDismissListener {
+            translationPicker.setBackgroundResource(R.drawable.bg_pill)
         }
-        popup.show()
+
+        // Center the card under the pill, dropped 8dp below it.
+        val yOff = (8 * resources.displayMetrics.density).toInt()
+        val xOff = (translationPicker.width - widthPx) / 2
+        popup.showAsDropDown(translationPicker, xOff, yOff)
     }
 
     private fun refreshCurrentView() {

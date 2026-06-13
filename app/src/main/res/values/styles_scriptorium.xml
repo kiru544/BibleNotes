@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Scriptorium type & widget styles.
+
+  TWO KINDS of style live here:
+   • TextAppearance.Scriptorium.*  -> apply with  android:textAppearance="@style/..."
+     (font, size, color, letter-spacing, caps). Composable onto any TextView.
+   • Widget.Scriptorium.*          -> apply with  style="@style/..."
+     (full View styles: background, padding, line-height, gravity).
+
+  Fonts are referenced by their specific weight file (e.g. @font/spectral_semibold)
+  rather than @font/spectral + textFontWeight, because per-weight files resolve
+  reliably down to your minSdk 24.
+
+  letterSpacing is in EM units (tracking_px / font_size):
+   • eyebrow  2.4px @ 11sp  -> ~0.22
+   • title   -0.3px @ 32sp  -> ~-0.01
+-->
+<resources>
+
+    <!-- ===================== TEXT APPEARANCES ===================== -->
+
+    <!-- ◆ UPPERCASE LABEL — section eyebrow above big serif titles -->
+    <style name="TextAppearance.Scriptorium.Eyebrow" parent="">
+        <item name="android:fontFamily">@font/archivo_bold</item>
+        <item name="android:textSize">@dimen/text_eyebrow</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.22</item>
+        <item name="android:textColor">@color/accent_red</item>
+    </style>
+
+    <!-- Big serif screen title (Notes / Documents / Book) -->
+    <style name="TextAppearance.Scriptorium.ScreenTitle" parent="">
+        <item name="android:fontFamily">@font/spectral_semibold</item>
+        <item name="android:textSize">@dimen/text_screen_title</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <!-- Centered chapter title in the reader ("Chapter II") -->
+    <style name="TextAppearance.Scriptorium.ChapterTitle" parent="">
+        <item name="android:fontFamily">@font/spectral_semibold</item>
+        <item name="android:textSize">@dimen/text_chapter_title</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <!-- List-item / body title (book name, note title) -->
+    <style name="TextAppearance.Scriptorium.ItemTitle" parent="">
+        <item name="android:fontFamily">@font/spectral_semibold</item>
+        <item name="android:textSize">@dimen/text_item_title</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <!-- Scripture body text (font/size/color only; line-height is in the widget style) -->
+    <style name="TextAppearance.Scriptorium.Scripture" parent="">
+        <item name="android:fontFamily">@font/spectral_regular</item>
+        <item name="android:textSize">@dimen/text_scripture</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <!-- Buttons & nav labels — never all-caps -->
+    <style name="TextAppearance.Scriptorium.Button" parent="">
+        <item name="android:fontFamily">@font/archivo_semibold</item>
+        <item name="android:textSize">@dimen/text_button</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <!-- Meta / dates / "of N" -->
+    <style name="TextAppearance.Scriptorium.Meta" parent="">
+        <item name="android:fontFamily">@font/archivo_semibold</item>
+        <item name="android:textSize">@dimen/text_meta</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:textColor">@color/text_tertiary</item>
+    </style>
+
+    <!-- Verse number (use inline via spans in the reader; this is for standalone use) -->
+    <style name="TextAppearance.Scriptorium.VerseNumber" parent="">
+        <item name="android:fontFamily">@font/archivo_bold</item>
+        <item name="android:textColor">@color/accent_red</item>
+    </style>
+
+
+    <!-- ======================= WIDGET STYLES ====================== -->
+
+    <!-- Card container: rounded surface + hairline + soft shadow.
+         elevation gives the shadow that a shape drawable can't. -->
+    <style name="Widget.Scriptorium.Card" parent="">
+        <item name="android:background">@drawable/bg_card</item>
+        <item name="android:elevation">2dp</item>
+        <item name="android:padding">@dimen/card_padding</item>
+    </style>
+
+    <!-- Scripture body TextView: applies the scripture appearance + 1.82 line height.
+         Justified text is set in code (needs API 26+ guard) — see INSTALL note. -->
+    <style name="Widget.Scriptorium.Scripture" parent="Widget.AppCompat.TextView">
+        <item name="android:textAppearance">@style/TextAppearance.Scriptorium.Scripture</item>
+        <item name="android:lineSpacingMultiplier">1.82</item>
+    </style>
+
+    <!-- Primary accent button (apply to a TextView or AppCompatButton). -->
+    <style name="Widget.Scriptorium.Button.Accent" parent="Widget.AppCompat.TextView">
+        <item name="android:background">@drawable/btn_accent</item>
+        <item name="android:textAppearance">@style/TextAppearance.Scriptorium.Button</item>
+        <item name="android:textColor">@color/on_accent</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingHorizontal">20dp</item>
+        <item name="android:paddingVertical">12dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <!-- Outlined button (Export / Import). -->
+    <style name="Widget.Scriptorium.Button.Outline" parent="Widget.AppCompat.TextView">
+        <item name="android:background">@drawable/btn_outline</item>
+        <item name="android:textAppearance">@style/TextAppearance.Scriptorium.Button</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingHorizontal">18dp</item>
+        <item name="android:paddingVertical">12dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <!-- Reference / alias chip (accent_soft pill). -->
+    <style name="Widget.Scriptorium.Chip" parent="Widget.AppCompat.TextView">
+        <item name="android:background">@drawable/bg_chip_accent</item>
+        <item name="android:fontFamily">@font/archivo_semibold</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/accent_red</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingHorizontal">10dp</item>
+        <item name="android:paddingVertical">5dp</item>
+    </style>
+
+</resources>
